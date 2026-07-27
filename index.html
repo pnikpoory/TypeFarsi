@@ -113,7 +113,7 @@ input,textarea,select{font-size:16px!important}
 }
 
 </style>
-<!-- FarsiType font pack v3 -->
+<!-- FarsiType font pack v4 -->
 </head>
 <body>
 <div id="app">
@@ -253,26 +253,18 @@ let canvasW=1181, canvasH=1181;
 const paper=document.getElementById('canvasPaper'), container=document.getElementById('canvasContainer'), addTextZone=document.getElementById('addTextZone');
 
 const builtinFonts=[
-  // iPadOS/Safari safe Persian & Arabic web fonts. Exact proprietary fonts like
-  // Yekan Bakh are not bundled by iPadOS, so closest reliable web alternatives
-  // are used here. You can still add exact .ttf/.otf font files from inside app.
-  {name:'یکان',css:'"Vazirmatn", "Noto Sans Arabic", Tahoma, Arial, sans-serif'},
-  {name:'یکان باخ',css:'"Vazirmatn", "Reem Kufi", "Noto Sans Arabic", Tahoma, Arial, sans-serif'},
-  {name:'تیتر',css:'"Lalezar", "Vazirmatn", Tahoma, Arial, sans-serif'},
-  {name:'تیتر ضخیم',css:'"Rakkas", "Lalezar", "Vazirmatn", Tahoma, Arial, sans-serif'},
+  // iPadOS/Safari safe Persian & Arabic web fonts. Exact proprietary fonts can
+  // be added from inside the app via «افزودن فونت از حافظه».
+  {name:'ایران سنس',css:'"Vazirmatn", "Noto Sans Arabic", Tahoma, Arial, sans-serif'},
+  {name:'لاله زار',css:'"Lalezar", "Vazirmatn", Tahoma, Arial, sans-serif'},
   {name:'تیتر کوفی',css:'"Reem Kufi", "Vazirmatn", Tahoma, Arial, sans-serif'},
   {name:'نستعلیق نوتو',css:'"Noto Nastaliq Urdu", "Noto Naskh Arabic", serif'},
-  {name:'نستعلیق ظریف',css:'"Noto Nastaliq Urdu", "Lateef", serif'},
   {name:'نستعلیق نمایشی',css:'"Gulzar", "Noto Nastaliq Urdu", serif'},
   {name:'خطاطی رقعه',css:'"Aref Ruqaa", "Noto Naskh Arabic", serif'},
   {name:'خوشنویسی میرزا',css:'"Mirza", "Noto Naskh Arabic", serif'},
   {name:'نسخ کتابی',css:'"Scheherazade New", "Noto Naskh Arabic", serif'},
   {name:'نازنین',css:'"Noto Naskh Arabic", "Vazirmatn", Tahoma, serif'},
-  {name:'نازنین بلد',css:'"Noto Naskh Arabic", "Vazirmatn", Tahoma, serif'},
   {name:'زر',css:'"Amiri", "Scheherazade New", serif'},
-  {name:'زر بلد',css:'"Amiri", "Scheherazade New", serif'},
-  {name:'کودک',css:'"Markazi Text", "Vazirmatn", Tahoma, serif'},
-  {name:'ثلث',css:'"Aref Ruqaa", "Noto Naskh Arabic", serif'},
 ];
 
 let layerFontStyles={};
