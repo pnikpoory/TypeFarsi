@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v10 -->
+<!-- FarsiType font pack v12 -->
 </head>
 <body>
 <div id="app">
@@ -231,7 +231,7 @@ input,textarea,select{font-size:16px!important}
           <div class="export-btn" onclick="doExport('jpg')"><div class="export-btn-icon">📷</div><div class="export-btn-title">JPG</div><div class="export-btn-desc">فشرده</div></div>
           <div class="export-btn" onclick="doExport('svg')"><div class="export-btn-icon">📐</div><div class="export-btn-title">SVG</div><div class="export-btn-desc">برداری</div></div>
           <div class="export-btn" onclick="doExport('pdf')"><div class="export-btn-icon">📄</div><div class="export-btn-title">PDF</div><div class="export-btn-desc">چاپ</div></div>
-          <div class="export-btn" onclick="doExport('svg')"><div class="export-btn-icon">🎨</div><div class="export-btn-title">Illustrator</div><div class="export-btn-desc">SVG</div></div>
+          <div class="export-btn" onclick="doExport('ai')"><div class="export-btn-icon">🎨</div><div class="export-btn-title">AI</div><div class="export-btn-desc">Illustrator</div></div>
           <div class="export-btn" onclick="doExport('psd')"><div class="export-btn-icon">🧩</div><div class="export-btn-title">PSD</div><div class="export-btn-desc">Photoshop</div></div>
         </div>
         <div class="made-by">Made By: <a href="https://t.me/pnikpoory" target="_blank" rel="noopener">PoOrya.npr</a></div>
@@ -550,7 +550,7 @@ document.getElementById('bgFileInput').addEventListener('change',(e)=>{const f=e
 function removeBg(){bgImage=null;bgDataUrl=null;document.getElementById('removeBgBtn').style.display='none';updateCanvasBg();showToast('🗑️ پس‌زمینه حذف شد');}
 
 // ===== EXPORT =====
-function doExport(format){if(selectedLayer)selectedLayer.el.classList.remove('selected');selectedLayer=null;const dpi=getDPI(),transparent=document.getElementById('toggleTransparent').classList.contains('on'),bgColor=document.getElementById('canvasBg').value;if(format==='png')exportPNG(dpi,transparent,bgColor);else if(format==='jpg')exportJPG(dpi,bgColor);else if(format==='svg')exportSVG(transparent,bgColor);else if(format==='pdf')exportPDF(transparent,bgColor);else if(format==='ai')exportAI(transparent,bgColor);else if(format==='eps')exportEPS(transparent,bgColor);}
+function doExport(format){if(selectedLayer)selectedLayer.el.classList.remove('selected');selectedLayer=null;const dpi=getDPI(),transparent=document.getElementById('toggleTransparent').classList.contains('on'),bgColor=document.getElementById('canvasBg').value;if(format==='png')exportPNG(dpi,transparent,bgColor);else if(format==='jpg')exportJPG(dpi,bgColor);else if(format==='svg')exportSVG(transparent,bgColor);else if(format==='pdf')exportPDF(transparent,bgColor);else if(format==='ai')exportAI(transparent,bgColor);else if(format==='psd')exportPSD();}
 
 async function renderAllTextToCanvas(ctx,scale,bgColor,transparent){if(!transparent){if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,canvasW*scale,canvasH*scale);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,canvasW*scale,canvasH*scale);}}const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));for(const layer of sorted){const fontCSS=getFontCSS(layer.fontName);const realFamily=primaryFontFamily(fontCSS);try{await document.fonts.load(`${layer.bold?'bold ':''} ${layer.italic?'italic ':''} ${layer.size*scale}px "${realFamily}"`);}catch(e){}const x=layer.cx*scale,y=layer.cy*scale,w=layer.cw*scale,h=layer.ch*scale;const text=layer.inner.innerText||layer.inner.textContent;const ls=layer.layout==='fill'?(layer._fillLetterSpacing||0):layer.letterSpacing;ctx.save();ctx.font=`${layer.bold?'bold ':''}${layer.italic?'italic ':''}${layer.size*scale}px ${fontCSS}`;ctx.fillStyle=layer.color;ctx.textAlign=layer.align==='justify'?'right':layer.align;ctx.textBaseline='top';if(layer.shadow){ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=8*scale;ctx.shadowOffsetX=2*scale;ctx.shadowOffsetY=2*scale;}const lines=text.split('\n'),lineH=layer.size*scale*layer.lineHeight;let textX;if(layer.align==='right')textX=x+w;else if(layer.align==='center')textX=x+w/2;else textX=x;let startY=y;if(layer.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}lines.forEach((line,i)=>{if(ls!==0){try{ctx.letterSpacing=(ls*scale)+'px';}catch(e){}}ctx.fillText(line,textX,startY+i*lineH);});ctx.restore();}}
 
@@ -560,46 +560,39 @@ async function exportJPG(dpi,bgColor){const cvs=document.createElement('canvas')
 function saveImageWithPicker(canvas,filename,mimeType){canvas.toBlob(blob=>{saveBlobFile(blob,filename,mimeType);},mimeType,0.95);}
 
 function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function buildSVGString(transparent,bgColor){
+async function layerToPngDataURL(layer){
+  const c=document.createElement('canvas');c.width=canvasW;c.height=canvasH;
+  const ctx=c.getContext('2d',{willReadFrequently:true});
+  await drawOneLayerToCanvas(ctx,layer,1);
+  const url=c.toDataURL('image/png');
+  c.width=c.height=0;
+  return url;
+}
+async function buildSVGString(transparent,bgColor){
+  // Appearance-safe SVG: each text box is converted to a transparent image layer.
+  // This avoids Persian/Arabic glyph splitting in Illustrator/Photoshop imports.
   const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
-  let svg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}" direction="rtl">\n`;
-  let defs='';
-  const fontCSS=[];
-  const usedFonts=new Set();
-  for(const l of sorted){
-    if(l.fontName&&fonts[l.fontName]&&!usedFonts.has(l.fontName)){
-      usedFonts.add(l.fontName);
-      const f=fonts[l.fontName];
-      const m=f.style.textContent.match(/url\("([^"]+)"\)/);
-      if(m) fontCSS.push(`@font-face{font-family:'${f.family.replace(/'/g,'')}';src:url('${m[1]}');}`);
-    }
-  }
-  if(fontCSS.length) defs+=`<style><![CDATA[${fontCSS.join('\n')}]]></style>\n`;
-  if(sorted.some(l=>l.shadow)) defs+=`<filter id="ftShadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="2" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/></filter>\n`;
-  if(defs) svg+=`<defs>\n${defs}</defs>\n`;
+  let svg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}">\n`;
   if(!transparent){
     if(bgDataUrl) svg+=`<image href="${escapeAttr(bgDataUrl)}" x="0" y="0" width="${canvasW}" height="${canvasH}" preserveAspectRatio="none"/>\n`;
     else svg+=`<rect x="0" y="0" width="${canvasW}" height="${canvasH}" fill="${escapeAttr(bgColor)}"/>\n`;
   }
-  for(const l of sorted){
-    const ff=getFontCSS(l.fontName),x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;
-    let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}
-    const ls=l.layout==='fill'?(l._fillLetterSpacing||0):l.letterSpacing;
-    const tx=l.align==='center'?x+w/2:l.align==='left'?x:x+w;
-    const anchor=l.align==='right'||l.align==='justify'?'end':l.align==='center'?'middle':'start';
-    const style=`font-family:${ff};font-size:${l.size}px;fill:${l.color};font-weight:${l.bold?'700':'400'};font-style:${l.italic?'italic':'normal'};letter-spacing:${ls}px;white-space:pre`;
-    svg+=`<text x="${tx}" y="${startY+l.size*0.8}" text-anchor="${anchor}" direction="rtl" unicode-bidi="plaintext" style="${escapeAttr(style)}"${l.shadow?' filter="url(#ftShadow)"':''}>`;
-    lines.forEach((line,i)=>{svg+=`<tspan x="${tx}" y="${startY+i*lineH+l.size*0.8}">${escapeXml(line)}</tspan>`;});
-    svg+=`</text>\n`;
+  for(let i=0;i<sorted.length;i++){
+    const url=await layerToPngDataURL(sorted[i]);
+    svg+=`<image id="layer_${i+1}" href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}" preserveAspectRatio="none"/>\n`;
   }
   svg+='</svg>\n';
   return svg;
 }
-function exportSVG(transparent,bgColor){
-  const svg=buildSVGString(transparent,bgColor);
-  saveBlobFile(new Blob([svg],{type:'image/svg+xml'}),'FarsiType.svg','image/svg+xml');
-  showToast('✅ SVG ذخیره شد!');
+async function exportSVG(transparent,bgColor){
+  try{
+    showToast('در حال ساخت SVG سازگار...');
+    const svg=await buildSVGString(transparent,bgColor);
+    await saveBlobFile(new Blob([svg],{type:'image/svg+xml'}),'FarsiType.svg','image/svg+xml');
+    showToast('✅ SVG ذخیره شد!');
+  }catch(e){console.error(e);showToast('❌ خطا در خروجی SVG');}
 }
+
 
 async function exportPDF(transparent,bgColor){const cvs=document.createElement('canvas');cvs.width=canvasW;cvs.height=canvasH;const ctx=cvs.getContext('2d');if(!transparent){if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,cvs.width,cvs.height);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,cvs.width,cvs.height);}}await renderAllTextToCanvas(ctx,1,bgColor,transparent);const jpgData=cvs.toDataURL('image/jpeg',0.95),pdfW=canvasW*0.75,pdfH=canvasH*0.75;saveBlobFile(buildPDFBlob(jpgData,pdfW,pdfH,canvasW,canvasH),'FarsiType.pdf','application/pdf');showToast('✅ PDF ذخیره شد!');}
 
@@ -654,6 +647,64 @@ async function makeFlattenedExportCanvas(transparent,bgColor){
   await renderAllTextToCanvas(ctx,1,transparent?'#ffffff':bgColor,false);
   return cvs;
 }
+function rgbaToRgbAlpha(img){
+  const src=img.data, n=img.width*img.height, rgb=new Uint8Array(n*3), alpha=new Uint8Array(n);
+  let hasAlpha=false, hasPixels=false;
+  for(let i=0,j=0,k=0;i<n;i++,j+=4,k+=3){
+    const a=src[j+3]; alpha[i]=a; if(a>0) hasPixels=true; if(a<255) hasAlpha=true;
+    // Premultiply against white is NOT done; SMask carries transparency.
+    rgb[k]=src[j]; rgb[k+1]=src[j+1]; rgb[k+2]=src[j+2];
+  }
+  return {rgb,alpha,hasAlpha,hasPixels};
+}
+async function renderLayerImageData(layer){
+  const c=document.createElement('canvas'); c.width=canvasW; c.height=canvasH;
+  const ctx=c.getContext('2d',{willReadFrequently:true});
+  await drawOneLayerToCanvas(ctx,layer,1);
+  const img=ctx.getImageData(0,0,canvasW,canvasH); c.width=c.height=0;
+  return img;
+}
+function buildPdfCompatibleAI(images,transparent,bgColor){
+  const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi;
+  const enc=new TextEncoder(), parts=[]; let offset=0; const offsets=[];
+  function add(x){let b=typeof x==='string'?enc.encode(x):x; parts.push(b); offset+=b.length;}
+  function obj(n,bodyParts){offsets[n]=offset; add(`${n} 0 obj\n`); for(const p of bodyParts)add(p); add(`\nendobj\n`);}
+  let objNum=5;
+  for(const im of images){ if(im.hasAlpha){im.maskObj=objNum++;} im.obj=objNum++; }
+  const xobjs=images.map((im,i)=>`/Im${i+1} ${im.obj} 0 R`).join(' ');
+  const content=[];
+  if(!transparent && !bgDataUrl){const [r,g,b]=hexToRgb01(bgColor);content.push(`${r} ${g} ${b} rg 0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)} re f\n`);}
+  images.forEach((im,i)=>content.push(`q ${pageW.toFixed(3)} 0 0 ${pageH.toFixed(3)} 0 0 cm /Im${i+1} Do Q\n`));
+  const cs=content.join('');
+  add('%PDF-1.5\n%\xE2\xE3\xCF\xD3\n');
+  obj(1,['<< /Type /Catalog /Pages 2 0 R >>']);
+  obj(2,['<< /Type /Pages /Kids [3 0 R] /Count 1 >>']);
+  obj(3,[`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}] /Contents 4 0 R /Resources << /XObject << ${xobjs} >> >> >>`]);
+  obj(4,[`<< /Length ${enc.encode(cs).length} >>\nstream\n${cs}endstream`]);
+  for(const im of images){
+    if(im.hasAlpha){obj(im.maskObj,[`<< /Type /XObject /Subtype /Image /Width ${canvasW} /Height ${canvasH} /ColorSpace /DeviceGray /BitsPerComponent 8 /Length ${im.alpha.length} >>\nstream\n`,im.alpha,'\nendstream']);}
+    obj(im.obj,[`<< /Type /XObject /Subtype /Image /Width ${canvasW} /Height ${canvasH} /ColorSpace /DeviceRGB /BitsPerComponent 8 ${im.hasAlpha?`/SMask ${im.maskObj} 0 R `:''}/Length ${im.rgb.length} >>\nstream\n`,im.rgb,'\nendstream']);
+  }
+  const xrefPos=offset; add(`xref\n0 ${objNum}\n0000000000 65535 f \n`);
+  for(let i=1;i<objNum;i++) add(String(offsets[i]||0).padStart(10,'0')+' 00000 n \n');
+  add(`trailer\n<< /Size ${objNum} /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF\n`);
+  return new Blob(parts,{type:'application/pdf'});
+}
+async function exportAI(transparent,bgColor){
+  try{
+    showToast('در حال ساخت AI سازگار...');
+    const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
+    const images=[];
+    if(!transparent && bgImage&&bgDataUrl){
+      const c=document.createElement('canvas');c.width=canvasW;c.height=canvasH;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(bgImage,0,0,canvasW,canvasH);images.push(rgbaToRgbAlpha(ctx.getImageData(0,0,canvasW,canvasH)));c.width=c.height=0;
+    }
+    for(const l of sorted){const im=rgbaToRgbAlpha(await renderLayerImageData(l)); if(im.hasPixels) images.push(im);}
+    const blob=buildPdfCompatibleAI(images,transparent,bgColor);
+    await saveBlobFile(blob,'FarsiType.ai','application/illustrator');
+    showToast('✅ AI ذخیره شد!');
+  }catch(e){console.error(e);showToast('❌ خطا در خروجی AI');}
+}
+
 async function drawOneLayerToCanvas(ctx,layer,scale=1){
   const fontCSS=getFontCSS(layer.fontName);
   const realFamily=primaryFontFamily(fontCSS);
@@ -737,7 +788,7 @@ async function exportPSD(){
 
 async function saveBlobFile(blob,filename,mimeType){
   const ext=filename.split('.').pop();
-  const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/illustrator':[{description:'Adobe Illustrator',accept:{'application/pdf':['.ai'],'application/illustrator':['.ai']}}],'application/postscript':[{description:'EPS',accept:{'application/postscript':['.eps'],'application/eps':['.eps']}}],'image/vnd.adobe.photoshop':[{description:'Photoshop PSD',accept:{'image/vnd.adobe.photoshop':['.psd'],'application/octet-stream':['.psd']}}]};
+  const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/illustrator':[{description:'Adobe Illustrator',accept:{'application/pdf':['.ai'],'application/illustrator':['.ai']}}],'image/vnd.adobe.photoshop':[{description:'Photoshop PSD',accept:{'image/vnd.adobe.photoshop':['.psd'],'application/octet-stream':['.psd']}}]};
   try{
     if(window.showSaveFilePicker){
       const h=await window.showSaveFilePicker({suggestedName:filename,types:types[mimeType]||[{description:ext,accept:{'*/*':['.'+ext]}}]});
