@@ -94,12 +94,13 @@ button{font-family:inherit;cursor:pointer}input,textarea,select{font-family:inhe
 .move-handle:active{cursor:grabbing}
 .move-handle svg{width:12px;height:12px;fill:var(--text2)}
 .text-layer.selected .move-handle,.text-layer:hover .move-handle{display:flex}
-.text-layer .resize-handle{position:absolute;width:10px;height:10px;background:var(--accent);border-radius:2px;z-index:20;cursor:nwse-resize;opacity:0;transition:opacity .15s;user-select:none;-webkit-user-select:none}
+.text-layer .resize-handle{position:absolute;width:34px;height:34px;background:transparent;border-radius:50%;z-index:40;opacity:0;transition:opacity .15s;user-select:none;-webkit-user-select:none;touch-action:none}
 .text-layer.selected .resize-handle,.text-layer:hover .resize-handle{opacity:1}
-.text-layer .resize-handle-sw{bottom:-5px;left:-5px}
-.text-layer .resize-handle-se{bottom:-5px;right:-5px;cursor:nesw-resize}
-.text-layer .resize-handle-nw{top:-5px;left:-5px;cursor:nesw-resize}
-.text-layer .resize-handle-ne{top:-5px;right:-5px;cursor:nwse-resize}
+.text-layer .resize-handle::after{content:'';position:absolute;left:50%;top:50%;width:11px;height:11px;transform:translate(-50%,-50%);background:var(--accent);border:2px solid var(--bg2);border-radius:3px;box-shadow:0 0 0 2px var(--accent-dim),0 0 10px var(--accent)}
+.text-layer .resize-handle-sw{bottom:-17px;left:-17px;cursor:nesw-resize}
+.text-layer .resize-handle-se{bottom:-17px;right:-17px;cursor:nwse-resize}
+.text-layer .resize-handle-nw{top:-17px;left:-17px;cursor:nwse-resize}
+.text-layer .resize-handle-ne{top:-17px;right:-17px;cursor:nesw-resize}
 .add-text-zone{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:5}
 .add-text-hint{color:var(--text3);font-size:13px;text-align:center;padding:20px;line-height:2}
 .sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;display:none}
@@ -135,11 +136,11 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 
-:root[data-theme="green"]{--canvas-bg:#13251d;--canvas-shadow:rgba(0,200,83,.28)}
-:root[data-theme="orange"]{--canvas-bg:#2b1c0a;--canvas-shadow:rgba(255,159,28,.30)}
+:root[data-theme="green"]{--canvas-bg:#1a1a1a;--canvas-shadow:rgba(0,0,0,.45)}
+:root[data-theme="orange"]{--canvas-bg:#1a1a1a;--canvas-shadow:rgba(0,0,0,.45)}
 :root[data-theme="grayblue"]{--canvas-bg:#d8e8f7;--canvas-shadow:rgba(100,168,255,.28)}
 :root[data-theme="cyber"]{--canvas-bg:#100026;--canvas-shadow:rgba(0,229,255,.42)}
-.canvas-paper{background:var(--canvas-bg)!important;box-shadow:0 0 0 1px var(--border),0 8px 32px var(--canvas-shadow)!important;transition:background .25s ease,box-shadow .25s ease}
+.canvas-paper{background:var(--canvas-bg);box-shadow:0 0 0 1px var(--border),0 8px 32px var(--canvas-shadow);transition:background .25s ease,box-shadow .25s ease}
 :root[data-theme="cyber"] body{background:radial-gradient(circle at 20% 0%,rgba(255,43,214,.18),transparent 34%),radial-gradient(circle at 85% 25%,rgba(0,229,255,.16),transparent 32%),var(--bg)}
 :root[data-theme="cyber"] .header,:root[data-theme="cyber"] .sidebar{box-shadow:0 0 22px rgba(255,43,214,.16), inset 0 0 18px rgba(0,229,255,.04)}
 :root[data-theme="cyber"] .h-btn,:root[data-theme="cyber"] .export-btn,:root[data-theme="cyber"] .sidebar-section,:root[data-theme="cyber"] .setting-row input,:root[data-theme="cyber"] .setting-row select{border-color:rgba(0,229,255,.32);box-shadow:0 0 10px rgba(0,229,255,.06)}
@@ -151,7 +152,7 @@ input,textarea,select{font-size:16px!important}
 @keyframes cyberBorder{0%,100%{outline-color:#ff2bd6;border-color:#ff2bd6}50%{outline-color:#00e5ff;border-color:#00e5ff}}
 
 </style>
-<!-- FarsiType font pack v16 -->
+<!-- FarsiType font pack v17 -->
 </head>
 <body>
 <div id="app">
@@ -502,11 +503,13 @@ function attachLayerEvents(layer){
   const el=layer.el, inner=layer.inner;
   // Click on inner → select layer (browser handles cursor natively)
   inner.addEventListener('mousedown',(e)=>{
+    const h=hitTestResizeHandle(e,layer);
+    if(h){e.preventDefault();e.stopPropagation();selectLayer(layer);startResize(e,layer,h);return;}
     e.stopPropagation(); // don't let canvas handler fire
     selectLayer(layer);
     // Let browser handle cursor placement natively — do NOT preventDefault
   });
-  inner.addEventListener('touchstart',(e)=>{e.stopPropagation();selectLayer(layer);},{passive:true});
+  inner.addEventListener('touchstart',(e)=>{const t=e.touches&&e.touches[0];const h=t?hitTestResizeHandle(t,layer):null;if(h){e.preventDefault();e.stopPropagation();selectLayer(layer);startTouchResize(e,layer,h);return;}e.stopPropagation();selectLayer(layer);},{passive:false});
   // Double-click on inner → select all text
   inner.addEventListener('dblclick',(e)=>{
     e.stopPropagation();
@@ -528,8 +531,27 @@ function attachLayerEvents(layer){
     rh.addEventListener('mousedown',(e)=>{e.preventDefault();e.stopPropagation();selectLayer(layer);startResize(e,layer,h);});
     rh.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();selectLayer(layer);startTouchResize(e,layer,h);},{passive:false});
   });
+  // Touch-friendly resize: grabbing a few pixels around any corner/edge starts resize.
+  el.addEventListener('mousedown',(e)=>{const h=hitTestResizeHandle(e,layer);if(h){e.preventDefault();e.stopPropagation();selectLayer(layer);startResize(e,layer,h);}});
+  el.addEventListener('touchstart',(e)=>{const t=e.touches&&e.touches[0];if(!t)return;const h=hitTestResizeHandle(t,layer);if(h){e.preventDefault();e.stopPropagation();selectLayer(layer);startTouchResize(e,layer,h);}},{passive:false});
   // Prevent clicks on el (but not inner) from reaching canvas
   el.addEventListener('mousedown',(e)=>{e.stopPropagation();});
+}
+
+
+function hitTestResizeHandle(e,layer){
+  if(!layer || !layer.el.classList.contains('selected')) return null;
+  const r=layer.el.getBoundingClientRect();
+  const x=e.clientX, y=e.clientY;
+  const tol=28; // touch-friendly zone around corners and edges
+  const nearL=Math.abs(x-r.left)<=tol, nearR=Math.abs(x-r.right)<=tol, nearT=Math.abs(y-r.top)<=tol, nearB=Math.abs(y-r.bottom)<=tol;
+  const insideX=x>=r.left-tol && x<=r.right+tol, insideY=y>=r.top-tol && y<=r.bottom+tol;
+  if(nearL&&nearT) return 'nw'; if(nearR&&nearT) return 'ne'; if(nearL&&nearB) return 'sw'; if(nearR&&nearB) return 'se';
+  if(insideX&&nearT) return x<r.left+r.width/2?'nw':'ne';
+  if(insideX&&nearB) return x<r.left+r.width/2?'sw':'se';
+  if(insideY&&nearL) return y<r.top+r.height/2?'nw':'sw';
+  if(insideY&&nearR) return y<r.top+r.height/2?'ne':'se';
+  return null;
 }
 
 // ===== POSITION & VISUALS =====
