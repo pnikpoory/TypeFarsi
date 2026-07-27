@@ -18,7 +18,7 @@
 :root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;--accent:#00c853;--accent2:#69f0ae;--accent-dim:rgba(0,200,83,0.15);--text:#e8e8e8;--text2:#aaa;--text3:#666;--border:#333;--danger:#ff5252}
 
 :root[data-theme="green"]{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;--accent:#00c853;--accent2:#69f0ae;--accent-dim:rgba(0,200,83,0.15);--text:#e8e8e8;--text2:#aaa;--text3:#666;--border:#333;--danger:#ff5252}
-:root[data-theme="orange"]{--bg:#110d08;--bg2:#1d160f;--bg3:#2b2116;--bg4:#3a2a19;--accent:#ff9f1c;--accent2:#ffd166;--accent-dim:rgba(255,159,28,0.17);--text:#fff3df;--text2:#d8b98a;--text3:#8b765c;--border:#463522;--danger:#ff5252}
+:root[data-theme="orange"]{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;--accent:#ff9f1c;--accent2:#ffd166;--accent-dim:rgba(255,159,28,0.16);--text:#e8e8e8;--text2:#aaa;--text3:#666;--border:#333;--danger:#ff5252}
 :root[data-theme="grayblue"]{--bg:#eef3f8;--bg2:#dde7f1;--bg3:#f8fbff;--bg4:#d1dfec;--accent:#64a8ff;--accent2:#9ed0ff;--accent-dim:rgba(100,168,255,0.22);--text:#1f3144;--text2:#536a82;--text3:#8798aa;--border:#bfd0e2;--danger:#ff5252}
 :root[data-theme="cyber"]{--bg:#080019;--bg2:#12002d;--bg3:#1d0048;--bg4:#2a0068;--accent:#ff2bd6;--accent2:#00e5ff;--accent-dim:rgba(255,43,214,0.18);--text:#f2e8ff;--text2:#cda8ff;--text3:#8367a6;--border:#51207d;--danger:#ff3860}
 .theme-switch{display:flex;align-items:center;gap:6px;background:var(--bg3);border:1px solid var(--border);border-radius:999px;padding:4px;direction:ltr}
@@ -134,8 +134,24 @@ input,textarea,select{font-size:16px!important}
 .made-by a{color:var(--accent2);font-weight:700;text-decoration:none}
 .made-by a:hover{text-decoration:underline}
 
+
+:root[data-theme="green"]{--canvas-bg:#13251d;--canvas-shadow:rgba(0,200,83,.28)}
+:root[data-theme="orange"]{--canvas-bg:#2b1c0a;--canvas-shadow:rgba(255,159,28,.30)}
+:root[data-theme="grayblue"]{--canvas-bg:#d8e8f7;--canvas-shadow:rgba(100,168,255,.28)}
+:root[data-theme="cyber"]{--canvas-bg:#100026;--canvas-shadow:rgba(0,229,255,.42)}
+.canvas-paper{background:var(--canvas-bg)!important;box-shadow:0 0 0 1px var(--border),0 8px 32px var(--canvas-shadow)!important;transition:background .25s ease,box-shadow .25s ease}
+:root[data-theme="cyber"] body{background:radial-gradient(circle at 20% 0%,rgba(255,43,214,.18),transparent 34%),radial-gradient(circle at 85% 25%,rgba(0,229,255,.16),transparent 32%),var(--bg)}
+:root[data-theme="cyber"] .header,:root[data-theme="cyber"] .sidebar{box-shadow:0 0 22px rgba(255,43,214,.16), inset 0 0 18px rgba(0,229,255,.04)}
+:root[data-theme="cyber"] .h-btn,:root[data-theme="cyber"] .export-btn,:root[data-theme="cyber"] .sidebar-section,:root[data-theme="cyber"] .setting-row input,:root[data-theme="cyber"] .setting-row select{border-color:rgba(0,229,255,.32);box-shadow:0 0 10px rgba(0,229,255,.06)}
+:root[data-theme="cyber"] .h-btn.active,:root[data-theme="cyber"] .h-btn:hover,:root[data-theme="cyber"] .export-btn:hover{animation:cyberPulse 2.2s ease-in-out infinite;border-color:var(--accent2);box-shadow:0 0 10px rgba(255,43,214,.34),0 0 18px rgba(0,229,255,.22)}
+:root[data-theme="cyber"] .canvas-paper{animation:cyberCanvas 3.2s ease-in-out infinite;background:linear-gradient(135deg,#11002c,#060017)!important;border:1px solid rgba(0,229,255,.38)}
+:root[data-theme="cyber"] .draw-rect,:root[data-theme="cyber"] .text-layer.selected{animation:cyberBorder 2s linear infinite}
+@keyframes cyberPulse{0%,100%{border-color:#ff2bd6;color:#ff9ff0}50%{border-color:#00e5ff;color:#9cf8ff}}
+@keyframes cyberCanvas{0%,100%{box-shadow:0 0 0 1px rgba(255,43,214,.55),0 0 26px rgba(255,43,214,.28),0 0 44px rgba(0,229,255,.14)}50%{box-shadow:0 0 0 1px rgba(0,229,255,.62),0 0 30px rgba(0,229,255,.30),0 0 50px rgba(255,43,214,.16)}}
+@keyframes cyberBorder{0%,100%{outline-color:#ff2bd6;border-color:#ff2bd6}50%{outline-color:#00e5ff;border-color:#00e5ff}}
+
 </style>
-<!-- FarsiType font pack v15 -->
+<!-- FarsiType font pack v16 -->
 </head>
 <body>
 <div id="app">
@@ -256,7 +272,7 @@ input,textarea,select{font-size:16px!important}
 
     <div class="canvas-area">
       <div class="canvas-container" id="canvasContainer">
-        <div class="canvas-paper mode-draw" id="canvasPaper" style="width:540px;height:540px;background:#1a1a1a">
+        <div class="canvas-paper mode-draw" id="canvasPaper" style="width:540px;height:540px;background:var(--canvas-bg)">
           <div class="add-text-zone" id="addTextZone">
             <div class="add-text-hint">📐 روی صفحه کلیک کن و بکش تا کادر متن رسم بشه<br>بعد از رسم کادر، متن خود را تایپ کنید</div>
           </div>
