@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v12 -->
+<!-- FarsiType font pack v13 -->
 </head>
 <body>
 <div id="app">
@@ -560,6 +560,79 @@ async function exportJPG(dpi,bgColor){const cvs=document.createElement('canvas')
 function saveImageWithPicker(canvas,filename,mimeType){canvas.toBlob(blob=>{saveBlobFile(blob,filename,mimeType);},mimeType,0.95);}
 
 function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+let vectorLibPromise=null, vectorFontCache={};
+async function loadVectorLibs(){
+  if(!vectorLibPromise){
+    vectorLibPromise=Promise.all([
+      import('./assets/opentype.min.mjs'),
+      import('./assets/harfbuzz/index.mjs')
+    ]).then(([ot,hb])=>({opentype:ot.default||ot, hb}));
+  }
+  return vectorLibPromise;
+}
+async function dataUrlToArrayBuffer(url){return await (await fetch(url)).arrayBuffer();}
+async function getVectorFont(fontName){
+  if(!fonts[fontName]||!fonts[fontName].custom||!fonts[fontName].src) return null;
+  if(vectorFontCache[fontName]) return vectorFontCache[fontName];
+  const libs=await loadVectorLibs();
+  const buf=await dataUrlToArrayBuffer(fonts[fontName].src);
+  const otFont=libs.opentype.parse(buf.slice(0));
+  const blob=new libs.hb.Blob(buf);
+  const face=new libs.hb.Face(blob,0);
+  const hbFont=new libs.hb.Font(face);
+  const upem=otFont.unitsPerEm || face.upem || 1000;
+  return vectorFontCache[fontName]={libs,buf,otFont,blob,face,hbFont,upem};
+}
+function pathToD(path){
+  return path.commands.map(c=>{
+    if(c.type==='M')return`M${c.x.toFixed(3)} ${c.y.toFixed(3)}`;
+    if(c.type==='L')return`L${c.x.toFixed(3)} ${c.y.toFixed(3)}`;
+    if(c.type==='C')return`C${c.x1.toFixed(3)} ${c.y1.toFixed(3)} ${c.x2.toFixed(3)} ${c.y2.toFixed(3)} ${c.x.toFixed(3)} ${c.y.toFixed(3)}`;
+    if(c.type==='Q')return`Q${c.x1.toFixed(3)} ${c.y1.toFixed(3)} ${c.x.toFixed(3)} ${c.y.toFixed(3)}`;
+    if(c.type==='Z')return'Z';
+    return'';
+  }).join(' ');
+}
+function isRTLText(t){return /[\u0600-\u06FF]/.test(t||'');}
+function shapeLine(vf,text){
+  const hb=vf.libs.hb;
+  const b=new hb.Buffer();
+  b.addText(text||'');
+  if(isRTLText(text)){b.setDirection(hb.Direction.RTL);b.setScript('Arab');b.setLanguage('fa');}
+  else {b.setDirection(hb.Direction.LTR);b.setScript('Latn');b.setLanguage('en');}
+  hb.shape(vf.hbFont,b);
+  return b.getGlyphInfosAndPositions();
+}
+function lineAdvance(shaped,scale){return shaped.reduce((s,g)=>s+(g.xAdvance||0)*scale,0);}
+async function layerToOutlinedSVG(layer,index){
+  const vf=await getVectorFont(layer.fontName);
+  if(!vf) return null;
+  const x=layer.cx,y=layer.cy,w=layer.cw,h=layer.ch,text=layer.inner.innerText||layer.inner.textContent;
+  const lines=text.split('\n'), lineH=layer.size*layer.lineHeight, scale=layer.size/vf.upem;
+  let startY=y;if(layer.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}
+  let out=`<g id="text_outline_${index}" fill="${escapeAttr(layer.color)}"${layer.shadow?' filter="url(#ftShadow")':''}>\n`;
+  for(let li=0;li<lines.length;li++){
+    const line=lines[li]||''; if(!line){continue;}
+    const shaped=shapeLine(vf,line);
+    const adv=lineAdvance(shaped,scale);
+    let cx=layer.align==='center'?x+(w-adv)/2:layer.align==='left'?x:x+w-adv;
+    let cy=startY+li*lineH+layer.size*0.82;
+    for(const g of shaped){
+      const gid=g.codepoint;
+      const glyph=vf.otFont.glyphs.get(gid);
+      if(glyph){
+        const gx=cx+(g.xOffset||0)*scale, gy=cy-(g.yOffset||0)*scale;
+        const p=glyph.getPath(gx,gy,layer.size);
+        const d=pathToD(p);
+        if(d) out+=`<path d="${d}"/>\n`;
+      }
+      cx+=(g.xAdvance||0)*scale;
+      cy-=(g.yAdvance||0)*scale;
+    }
+  }
+  out+='</g>\n';
+  return out;
+}
 async function layerToPngDataURL(layer){
   const c=document.createElement('canvas');c.width=canvasW;c.height=canvasH;
   const ctx=c.getContext('2d',{willReadFrequently:true});
@@ -568,28 +641,33 @@ async function layerToPngDataURL(layer){
   c.width=c.height=0;
   return url;
 }
-async function buildSVGString(transparent,bgColor){
-  // Appearance-safe SVG: each text box is converted to a transparent image layer.
-  // This avoids Persian/Arabic glyph splitting in Illustrator/Photoshop imports.
+async function buildSVGString(transparent,bgColor,outlineMode=true){
   const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
   let svg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}">\n`;
+  if(sorted.some(l=>l.shadow)) svg+=`<defs><filter id="ftShadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="2" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/></filter></defs>\n`;
   if(!transparent){
     if(bgDataUrl) svg+=`<image href="${escapeAttr(bgDataUrl)}" x="0" y="0" width="${canvasW}" height="${canvasH}" preserveAspectRatio="none"/>\n`;
     else svg+=`<rect x="0" y="0" width="${canvasW}" height="${canvasH}" fill="${escapeAttr(bgColor)}"/>\n`;
   }
   for(let i=0;i<sorted.length;i++){
-    const url=await layerToPngDataURL(sorted[i]);
-    svg+=`<image id="layer_${i+1}" href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}" preserveAspectRatio="none"/>\n`;
+    let done=false;
+    if(outlineMode){
+      try{const g=await layerToOutlinedSVG(sorted[i],i+1); if(g){svg+=g; done=true;}}catch(e){console.warn('outline failed for layer',i,e);}
+    }
+    if(!done){
+      const url=await layerToPngDataURL(sorted[i]);
+      svg+=`<image id="layer_${i+1}" href="${url}" x="0" y="0" width="${canvasW}" height="${canvasH}" preserveAspectRatio="none"/>\n`;
+    }
   }
   svg+='</svg>\n';
   return svg;
 }
 async function exportSVG(transparent,bgColor){
   try{
-    showToast('در حال ساخت SVG سازگار...');
-    const svg=await buildSVGString(transparent,bgColor);
+    showToast('در حال تبدیل متن به شیپ...');
+    const svg=await buildSVGString(transparent,bgColor,true);
     await saveBlobFile(new Blob([svg],{type:'image/svg+xml'}),'FarsiType.svg','image/svg+xml');
-    showToast('✅ SVG ذخیره شد!');
+    showToast('✅ SVG شیپ‌شده ذخیره شد!');
   }catch(e){console.error(e);showToast('❌ خطا در خروجی SVG');}
 }
 
@@ -692,16 +770,10 @@ function buildPdfCompatibleAI(images,transparent,bgColor){
 }
 async function exportAI(transparent,bgColor){
   try{
-    showToast('در حال ساخت AI سازگار...');
-    const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
-    const images=[];
-    if(!transparent && bgImage&&bgDataUrl){
-      const c=document.createElement('canvas');c.width=canvasW;c.height=canvasH;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(bgImage,0,0,canvasW,canvasH);images.push(rgbaToRgbAlpha(ctx.getImageData(0,0,canvasW,canvasH)));c.width=c.height=0;
-    }
-    for(const l of sorted){const im=rgbaToRgbAlpha(await renderLayerImageData(l)); if(im.hasPixels) images.push(im);}
-    const blob=buildPdfCompatibleAI(images,transparent,bgColor);
-    await saveBlobFile(blob,'FarsiType.ai','application/illustrator');
-    showToast('✅ AI ذخیره شد!');
+    showToast('در حال ساخت AI با متن شیپ‌شده...');
+    const svg=await buildSVGString(transparent,bgColor,true);
+    await saveBlobFile(new Blob([svg],{type:'application/illustrator'}),'FarsiType.ai','application/illustrator');
+    showToast('✅ AI شیپ‌شده ذخیره شد!');
   }catch(e){console.error(e);showToast('❌ خطا در خروجی AI');}
 }
 
