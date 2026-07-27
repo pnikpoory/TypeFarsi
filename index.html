@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v8 -->
+<!-- FarsiType font pack v9 -->
 </head>
 <body>
 <div id="app">
@@ -177,7 +177,7 @@ input,textarea,select{font-size:16px!important}
           تنظیمات متن
         </div>
         <div class="setting-row"><span class="setting-label">فونت:</span><div style="flex:1;min-width:0"><input class="font-search" id="fontSearch" type="search" placeholder="جستجوی فونت..." oninput="refreshFontDropdown()"><select id="selFont" onchange="onFontSelect()" onfocus="refreshFontDropdown()" onmousedown="refreshFontDropdown()" style="width:100%"></select></div></div>
-        <div class="setting-row"><span class="setting-label">اندازه:</span><input type="number" id="txtSize" value="48" min="6" max="500" onchange="updateSelected()" oninput="updateSelected()"><span class="unit-label">pt</span></div>
+        <div class="setting-row"><span class="setting-label">اندازه:</span><input type="number" id="txtSize" value="48" min="1" max="1000" onchange="syncFontSize(this.value)" oninput="syncFontSize(this.value)"><span class="unit-label">pt</span></div><div class="setting-row"><span class="setting-label"></span><input type="range" id="txtSizeRange" value="48" min="1" max="1000" step="1" oninput="syncFontSize(this.value)" onchange="syncFontSize(this.value)" style="flex:1;accent-color:var(--accent)"></div>
         <div class="setting-row"><span class="setting-label">رنگ:</span><input type="color" id="txtColor" value="#ffffff" onchange="updateSelected()" oninput="updateSelected()"><input type="text" id="txtColorHex" value="#ffffff" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px;border-radius:5px;font-size:10px;width:70px" onchange="document.getElementById('txtColor').value=this.value;updateSelected()"></div>
         <div class="setting-row"><span class="setting-label">فاصله خط:</span><input type="range" id="txtLineH" min="0.8" max="3" step="0.1" value="1.8" onchange="updateSelected()" oninput="updateSelected()"><span id="lineHVal" style="font-size:10px;color:var(--text3);min-width:24px">1.8</span></div>
         <div class="setting-row"><span class="setting-label">فاصله حرف:</span><input type="range" id="txtLetterSp" min="-5" max="20" step="0.5" value="0" onchange="updateSelected()" oninput="updateSelected()"><span id="letterSpVal" style="font-size:10px;color:var(--text3);min-width:24px">0</span></div>
@@ -506,11 +506,12 @@ function applyLayerVisuals(layer){const s=getScale();layer.inner.style.fontSize=
 function autoFitText(layer){const boxW=layer.cw,text=layer.inner.innerText||layer.inner.textContent;if(!text||!boxW)return;const lines=text.split('\n'),ff=getFontCSS(layer.fontName);const ts=document.createElement('span');ts.style.cssText=`font-family:${ff};font-weight:${layer.bold?'bold':'normal'};font-style:${layer.italic?'italic':'normal'};visibility:hidden;position:absolute;white-space:nowrap;direction:rtl;font-size:${layer.size}px;letter-spacing:0px`;document.body.appendChild(ts);let max=0;for(const line of lines){if(!line.trim())continue;ts.textContent=line;const nw=ts.offsetWidth,cc=line.length;if(cc<=1)continue;const ep=(boxW-nw)/(cc-1);if(ep>max)max=ep;}document.body.removeChild(ts);const fs=Math.max(0,max),s=getScale();layer.inner.style.letterSpacing=(fs*s)+'px';layer._fillLetterSpacing=fs;}
 
 // ===== SELECTION =====
-function selectLayer(layer){if(selectedLayer&&selectedLayer!==layer){selectedLayer.el.classList.remove('selected');}selectedLayer=layer;if(layer){layer.el.classList.add('selected');const fs=document.getElementById('fontSearch');if(fs)fs.value='';refreshFontDropdown(layer.fontName||'ایران سنس');document.getElementById('selFont').value=layer.fontName||'ایران سنس';document.getElementById('txtSize').value=layer.size;document.getElementById('txtColor').value=layer.color;document.getElementById('txtColorHex').value=layer.color;document.getElementById('toggleBold').classList.toggle('on',layer.bold);document.getElementById('toggleItalic').classList.toggle('on',layer.italic);document.getElementById('txtAlign').value=layer.align;document.getElementById('txtLineH').value=layer.lineHeight;document.getElementById('lineHVal').textContent=layer.lineHeight;document.getElementById('txtLetterSp').value=layer.letterSpacing;document.getElementById('letterSpVal').textContent=layer.letterSpacing;document.getElementById('toggleShadow').classList.toggle('on',layer.shadow);setLayoutUI(layer.layout||'normal');}}
+function selectLayer(layer){if(selectedLayer&&selectedLayer!==layer){selectedLayer.el.classList.remove('selected');}selectedLayer=layer;if(layer){layer.el.classList.add('selected');const fs=document.getElementById('fontSearch');if(fs)fs.value='';refreshFontDropdown(layer.fontName||'ایران سنس');document.getElementById('selFont').value=layer.fontName||'ایران سنس';document.getElementById('txtSize').value=layer.size;const sr=document.getElementById('txtSizeRange');if(sr)sr.value=layer.size;document.getElementById('txtColor').value=layer.color;document.getElementById('txtColorHex').value=layer.color;document.getElementById('toggleBold').classList.toggle('on',layer.bold);document.getElementById('toggleItalic').classList.toggle('on',layer.italic);document.getElementById('txtAlign').value=layer.align;document.getElementById('txtLineH').value=layer.lineHeight;document.getElementById('lineHVal').textContent=layer.lineHeight;document.getElementById('txtLetterSp').value=layer.letterSpacing;document.getElementById('letterSpVal').textContent=layer.letterSpacing;document.getElementById('toggleShadow').classList.toggle('on',layer.shadow);setLayoutUI(layer.layout||'normal');}}
 
 function deleteSelected(){if(!selectedLayer){showToast('⚠️ کادری انتخاب نشده');return;}historyPushBefore();const l=selectedLayer;if(layerFontStyles[l.id]){layerFontStyles[l.id].remove();delete layerFontStyles[l.id];}l.el.remove();layers=layers.filter(x=>x!==l);selectedLayer=null;if(!layers.length)addTextZone.style.display='flex';historyPush();showToast('🗑️ حذف شد');}
 
 let _lastUpdateSelectedState=null,_updateSelectedTimer=null;
+function syncFontSize(v){const n=Math.max(1,Math.min(1000,parseInt(v)||48));document.getElementById('txtSize').value=n;const r=document.getElementById('txtSizeRange');if(r)r.value=n;updateSelected();}
 function updateSelected(){if(!selectedLayer)return;if(!_lastUpdateSelectedState)_lastUpdateSelectedState=captureState();const l=selectedLayer;l.fontName=document.getElementById('selFont').value;l.size=parseInt(document.getElementById('txtSize').value)||48;l.color=document.getElementById('txtColor').value;l.bold=document.getElementById('toggleBold').classList.contains('on');l.italic=document.getElementById('toggleItalic').classList.contains('on');l.align=document.getElementById('txtAlign').value;l.lineHeight=parseFloat(document.getElementById('txtLineH').value)||1.8;l.letterSpacing=parseFloat(document.getElementById('txtLetterSp').value)||0;l.shadow=document.getElementById('toggleShadow').classList.contains('on');document.getElementById('lineHVal').textContent=l.lineHeight;document.getElementById('letterSpVal').textContent=l.letterSpacing;document.getElementById('txtColorHex').value=l.color;applyLayerVisuals(l);applyFontToLayer(l);clearTimeout(_updateSelectedTimer);_updateSelectedTimer=setTimeout(()=>{if(_lastUpdateSelectedState){historyStack=historyStack.slice(0,historyIndex+1);historyStack.push(_lastUpdateSelectedState);historyIndex=historyStack.length-1;_lastUpdateSelectedState=null;historyPush();}updateUndoRedoButtons();},300);}
 
 function setLayout(layout){if(selectedLayer&&selectedLayer.layout!==layout)historyPushBefore();currentLayout=layout;setLayoutUI(layout);if(selectedLayer){selectedLayer.layout=layout;applyLayerVisuals(selectedLayer);historyPush();}}
@@ -558,7 +559,47 @@ async function exportJPG(dpi,bgColor){const cvs=document.createElement('canvas')
 
 function saveImageWithPicker(canvas,filename,mimeType){canvas.toBlob(blob=>{saveBlobFile(blob,filename,mimeType);},mimeType,0.95);}
 
-function exportSVG(transparent,bgColor){const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));let svg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}">\n`;if(!transparent){if(bgDataUrl)svg+=`<image href="${bgDataUrl}" width="${canvasW}" height="${canvasH}"/>\n`;else svg+=`<rect width="${canvasW}" height="${canvasH}" fill="${bgColor}"/>\n`;}const efs=new Set();for(const l of sorted){if(l.fontName&&fonts[l.fontName]&&!efs.has(l.fontName)){efs.add(l.fontName);const f=fonts[l.fontName];const m=f.style.textContent.match(/url\("([^"]+)"\)/);if(m)svg+=`<defs><style>@font-face{font-family:"${f.family}";src:url("${m[1]}")}</style></defs>\n`;}}if(sorted.some(l=>l.shadow))svg+=`<defs><filter id="ts"><feDropShadow dx="2" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/></filter></defs>\n`;for(const l of sorted){const ff=getFontCSS(l.fontName),x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}const ls=l.layout==='fill'?(l._fillLetterSpacing||0):l.letterSpacing;lines.forEach((line,i)=>{const tx=l.align==='center'?x+w/2:l.align==='left'?x:x+w,ty=startY+i*lineH+l.size*0.8;svg+=`<text x="${tx}" y="${ty}" font-family="${ff}" font-size="${l.size}" fill="${l.color}" font-weight="${l.bold?'bold':'normal'}" font-style="${l.italic?'italic':'normal'}" text-anchor="${l.align==='right'?'end':l.align==='center'?'middle':'start'}" ${l.shadow?'filter="url(#ts)"':''} letter-spacing="${ls}">${escapeXml(line)}</text>\n`;});}svg+='</svg>';saveBlobFile(new Blob([svg],{type:'image/svg+xml'}),'FarsiType.svg','image/svg+xml');showToast('✅ SVG ذخیره شد!');}
+function escapeAttr(s){return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function buildSVGString(transparent,bgColor){
+  const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
+  let svg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}" direction="rtl">\n`;
+  let defs='';
+  const fontCSS=[];
+  const usedFonts=new Set();
+  for(const l of sorted){
+    if(l.fontName&&fonts[l.fontName]&&!usedFonts.has(l.fontName)){
+      usedFonts.add(l.fontName);
+      const f=fonts[l.fontName];
+      const m=f.style.textContent.match(/url\("([^"]+)"\)/);
+      if(m) fontCSS.push(`@font-face{font-family:'${f.family.replace(/'/g,'')}';src:url('${m[1]}');}`);
+    }
+  }
+  if(fontCSS.length) defs+=`<style><![CDATA[${fontCSS.join('\n')}]]></style>\n`;
+  if(sorted.some(l=>l.shadow)) defs+=`<filter id="ftShadow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="2" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/></filter>\n`;
+  if(defs) svg+=`<defs>\n${defs}</defs>\n`;
+  if(!transparent){
+    if(bgDataUrl) svg+=`<image href="${escapeAttr(bgDataUrl)}" x="0" y="0" width="${canvasW}" height="${canvasH}" preserveAspectRatio="none"/>\n`;
+    else svg+=`<rect x="0" y="0" width="${canvasW}" height="${canvasH}" fill="${escapeAttr(bgColor)}"/>\n`;
+  }
+  for(const l of sorted){
+    const ff=getFontCSS(l.fontName),x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;
+    let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}
+    const ls=l.layout==='fill'?(l._fillLetterSpacing||0):l.letterSpacing;
+    const tx=l.align==='center'?x+w/2:l.align==='left'?x:x+w;
+    const anchor=l.align==='right'||l.align==='justify'?'end':l.align==='center'?'middle':'start';
+    const style=`font-family:${ff};font-size:${l.size}px;fill:${l.color};font-weight:${l.bold?'700':'400'};font-style:${l.italic?'italic':'normal'};letter-spacing:${ls}px;white-space:pre`;
+    svg+=`<text x="${tx}" y="${startY+l.size*0.8}" text-anchor="${anchor}" direction="rtl" unicode-bidi="plaintext" style="${escapeAttr(style)}"${l.shadow?' filter="url(#ftShadow)"':''}>`;
+    lines.forEach((line,i)=>{svg+=`<tspan x="${tx}" y="${startY+i*lineH+l.size*0.8}">${escapeXml(line)}</tspan>`;});
+    svg+=`</text>\n`;
+  }
+  svg+='</svg>\n';
+  return svg;
+}
+function exportSVG(transparent,bgColor){
+  const svg=buildSVGString(transparent,bgColor);
+  saveBlobFile(new Blob([svg],{type:'image/svg+xml'}),'FarsiType.svg','image/svg+xml');
+  showToast('✅ SVG ذخیره شد!');
+}
 
 async function exportPDF(transparent,bgColor){const cvs=document.createElement('canvas');cvs.width=canvasW;cvs.height=canvasH;const ctx=cvs.getContext('2d');if(!transparent){if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,cvs.width,cvs.height);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,cvs.width,cvs.height);}}await renderAllTextToCanvas(ctx,1,bgColor,transparent);const jpgData=cvs.toDataURL('image/jpeg',0.95),pdfW=canvasW*0.75,pdfH=canvasH*0.75;saveBlobFile(buildPDFBlob(jpgData,pdfW,pdfH,canvasW,canvasH),'FarsiType.pdf','application/pdf');showToast('✅ PDF ذخیره شد!');}
 
@@ -615,39 +656,40 @@ async function makeFlattenedExportCanvas(transparent,bgColor){
 }
 async function exportAI(transparent,bgColor){
   try{
-    const cvs=await makeFlattenedExportCanvas(transparent,bgColor);
-    const jpegBytes=await canvasToJpegBytes(cvs,.96);
-    const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi;
-    const blob=buildPdfImageBlob(jpegBytes,canvasW,canvasH,pageW,pageH);
-    await saveBlobFile(blob,'FarsiType.ai','application/illustrator');
-    showToast('✅ AI ذخیره شد!');
+    // Illustrator opens SVG as fully vector artwork and keeps transparency.
+    // The file extension is .ai for the requested workflow, but the payload is
+    // clean SVG/XML so it remains coordinate-based, editable, and transparent.
+    const svg=buildSVGString(transparent,bgColor);
+    await saveBlobFile(new Blob([svg],{type:'application/illustrator'}),'FarsiType.ai','application/illustrator');
+    showToast('✅ AI سازگار با Illustrator ذخیره شد!');
   }catch(e){console.error(e);showToast('❌ خطا در خروجی AI');}
 }
-function rgbHexDataFromCanvas(canvas){
-  const ctx=canvas.getContext('2d',{willReadFrequently:true});
-  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
-  const hex=[]; for(let i=0;i<256;i++) hex[i]=i.toString(16).padStart(2,'0').toUpperCase();
-  const chunks=[]; let line='';
-  for(let i=0;i<data.length;i+=4){
-    line+=hex[data[i]]+hex[data[i+1]]+hex[data[i+2]];
-    if(line.length>=72){chunks.push(line+'\n'); line='';}
-  }
-  if(line) chunks.push(line+'\n');
-  chunks.push('>\n');
-  return chunks.join('');
-}
-function buildRawRgbEPS(canvas,pageW,pageH){
-  // Most compatible EPS mode: raw RGB + ASCIIHexDecode. Larger than JPEG EPS,
-  // but opens much more reliably in Illustrator, Corel, Preview, Affinity, etc.
-  const hexData=rgbHexDataFromCanvas(canvas);
-  return `%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%Title: FarsiType.eps\n%%LanguageLevel: 2\n%%BoundingBox: 0 0 ${Math.ceil(pageW)} ${Math.ceil(pageH)}\n%%HiResBoundingBox: 0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}\n%%Pages: 1\n%%DocumentData: Clean7Bit\n%%EndComments\n\ngsave\n0 0 translate\n${pageW.toFixed(3)} ${pageH.toFixed(3)} scale\n/DeviceRGB setcolorspace\n<<\n  /ImageType 1\n  /Width ${canvas.width}\n  /Height ${canvas.height}\n  /BitsPerComponent 8\n  /Decode [0 1 0 1 0 1]\n  /ImageMatrix [${canvas.width} 0 0 -${canvas.height} 0 ${canvas.height}]\n  /DataSource currentfile /ASCIIHexDecode filter\n>> image\n%%BeginData: ${hexData.length} ASCII Bytes\n${hexData}%%EndData\ngrestore\n%%EOF\n`;
-}
+function psEscapeAscii(s){return String(s).replace(/[\\()]/g,'\\$&').replace(/[\u0080-\uFFFF]/g,'?');}
+function hexToRgb01(hex){hex=(hex||'#000000').replace('#','');return [parseInt(hex.slice(0,2),16)/255,parseInt(hex.slice(2,4),16)/255,parseInt(hex.slice(4,6),16)/255].map(v=>isFinite(v)?v:0);}
 async function exportEPS(transparent,bgColor){
   try{
-    showToast('در حال ساخت EPS سازگار...');
-    const cvs=await makeFlattenedExportCanvas(transparent,bgColor);
+    // EPS is a legacy PostScript format and has weak Unicode/font support.
+    // This export is valid vector EPS: rectangles/background + text coordinates.
+    // Persian glyph shaping in EPS depends on the importing app/font availability.
     const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi;
-    const eps=buildRawRgbEPS(cvs,pageW,pageH);
+    const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
+    let eps=`%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%Title: FarsiType.eps\n%%LanguageLevel: 2\n%%BoundingBox: 0 0 ${Math.ceil(pageW)} ${Math.ceil(pageH)}\n%%HiResBoundingBox: 0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}\n%%Pages: 1\n%%EndComments\n\n`;
+    eps+=`${(72/dpi).toFixed(8)} ${(72/dpi).toFixed(8)} scale\n`;
+    if(!transparent && !bgDataUrl){const [r,g,b]=hexToRgb01(bgColor);eps+=`${r} ${g} ${b} setrgbcolor\n0 0 ${canvasW} ${canvasH} rectfill\n`;}
+    // If there is a background image, flatten only that background to keep file valid.
+    if(!transparent && bgImage&&bgDataUrl){
+      const bg=await makeFlattenedExportCanvas(false,bgColor);
+      const data=rgbHexDataFromCanvas(bg);
+      eps+=`gsave\n${canvasW} ${canvasH} scale\n/DeviceRGB setcolorspace\n<< /ImageType 1 /Width ${canvasW} /Height ${canvasH} /BitsPerComponent 8 /Decode [0 1 0 1 0 1] /ImageMatrix [${canvasW} 0 0 -${canvasH} 0 ${canvasH}] /DataSource currentfile /ASCIIHexDecode filter >> image\n${data}grestore\n`;
+    }
+    for(const l of sorted){
+      const [r,g,b]=hexToRgb01(l.color);const x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;
+      let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}
+      eps+=`gsave\n${r} ${g} ${b} setrgbcolor\n/Helvetica${l.bold?'-Bold':''} findfont ${l.size} scalefont setfont\n`;
+      lines.forEach((line,i)=>{const psX=l.align==='center'?x+w/2:l.align==='left'?x:x+w;const psY=canvasH-(startY+i*lineH+l.size*0.8);eps+=`${psX.toFixed(3)} ${psY.toFixed(3)} moveto (${psEscapeAscii(line)}) show\n`;});
+      eps+='grestore\n';
+    }
+    eps+='showpage\n%%EOF\n';
     await saveBlobFile(new Blob([eps],{type:'application/postscript'}),'FarsiType.eps','application/postscript');
     showToast('✅ EPS ذخیره شد!');
   }catch(e){console.error(e);showToast('❌ خطا در خروجی EPS');}
