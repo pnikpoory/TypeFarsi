@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v13 -->
+<!-- FarsiType font pack v14 -->
 </head>
 <body>
 <div id="app">
@@ -768,13 +768,75 @@ function buildPdfCompatibleAI(images,transparent,bgColor){
   add(`trailer\n<< /Size ${objNum} /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF\n`);
   return new Blob(parts,{type:'application/pdf'});
 }
+function pathToPdfOps(path){
+  let out='', cur={x:0,y:0};
+  for(const c of path.commands){
+    if(c.type==='M'){out+=`${c.x.toFixed(3)} ${c.y.toFixed(3)} m\n`;cur={x:c.x,y:c.y};}
+    else if(c.type==='L'){out+=`${c.x.toFixed(3)} ${c.y.toFixed(3)} l\n`;cur={x:c.x,y:c.y};}
+    else if(c.type==='C'){out+=`${c.x1.toFixed(3)} ${c.y1.toFixed(3)} ${c.x2.toFixed(3)} ${c.y2.toFixed(3)} ${c.x.toFixed(3)} ${c.y.toFixed(3)} c\n`;cur={x:c.x,y:c.y};}
+    else if(c.type==='Q'){
+      const c1={x:cur.x+2/3*(c.x1-cur.x),y:cur.y+2/3*(c.y1-cur.y)};
+      const c2={x:c.x+2/3*(c.x1-c.x),y:c.y+2/3*(c.y1-c.y)};
+      out+=`${c1.x.toFixed(3)} ${c1.y.toFixed(3)} ${c2.x.toFixed(3)} ${c2.y.toFixed(3)} ${c.x.toFixed(3)} ${c.y.toFixed(3)} c\n`;cur={x:c.x,y:c.y};
+    } else if(c.type==='Z'){out+='h\n';}
+  }
+  return out;
+}
+async function layerToPdfPathOps(layer){
+  const vf=await getVectorFont(layer.fontName);
+  if(!vf) throw new Error('برای خروجی AI شیپ‌شده، فونت لایه باید از حافظه اضافه شده باشد: '+(layer.fontName||''));
+  const x=layer.cx,y=layer.cy,w=layer.cw,h=layer.ch,text=layer.inner.innerText||layer.inner.textContent;
+  const lines=text.split('\n'), lineH=layer.size*layer.lineHeight, scale=layer.size/vf.upem;
+  let startY=y;if(layer.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}
+  const [r,g,b]=hexToRgb01(layer.color);
+  let out=`q\n${r.toFixed(4)} ${g.toFixed(4)} ${b.toFixed(4)} rg\n`;
+  for(let li=0;li<lines.length;li++){
+    const line=lines[li]||''; if(!line) continue;
+    const shaped=shapeLine(vf,line);
+    const adv=lineAdvance(shaped,scale);
+    let cx=layer.align==='center'?x+(w-adv)/2:layer.align==='left'?x:x+w-adv;
+    let cy=startY+li*lineH+layer.size*0.82;
+    for(const ginfo of shaped){
+      const glyph=vf.otFont.glyphs.get(ginfo.codepoint);
+      if(glyph){
+        const gx=cx+(ginfo.xOffset||0)*scale, gy=cy-(ginfo.yOffset||0)*scale;
+        const p=glyph.getPath(gx,gy,layer.size);
+        const ops=pathToPdfOps(p);
+        if(ops) out+=ops+'f\n';
+      }
+      cx+=(ginfo.xAdvance||0)*scale;
+      cy-=(ginfo.yAdvance||0)*scale;
+    }
+  }
+  out+='Q\n';
+  return out;
+}
+function buildVectorPdfBlob(content,pageW,pageH){
+  const enc=new TextEncoder(), parts=[]; let offset=0; const offsets=[];
+  function add(str){const b=enc.encode(str);parts.push(b);offset+=b.length;}
+  function obj(n,body){offsets[n]=offset;add(`${n} 0 obj\n${body}\nendobj\n`);}
+  add('%PDF-1.5\n%\xE2\xE3\xCF\xD3\n');
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  obj(3,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}] /Contents 4 0 R /Resources << >> >>`);
+  obj(4,`<< /Length ${enc.encode(content).length} >>\nstream\n${content}\nendstream`);
+  const xrefPos=offset;add('xref\n0 5\n0000000000 65535 f \n');for(let i=1;i<=4;i++)add(String(offsets[i]).padStart(10,'0')+' 00000 n \n');add(`trailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF\n`);
+  return new Blob(parts,{type:'application/pdf'});
+}
 async function exportAI(transparent,bgColor){
   try{
     showToast('در حال ساخت AI با متن شیپ‌شده...');
-    const svg=await buildSVGString(transparent,bgColor,true);
-    await saveBlobFile(new Blob([svg],{type:'application/illustrator'}),'FarsiType.ai','application/illustrator');
+    const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
+    const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi, s=72/dpi;
+    let body=`q\n${s.toFixed(8)} 0 0 ${(-s).toFixed(8)} 0 ${pageH.toFixed(8)} cm\n`;
+    if(!transparent && !bgDataUrl){const [r,g,b]=hexToRgb01(bgColor);body+=`${r} ${g} ${b} rg 0 0 ${canvasW} ${canvasH} re f\n`;}
+    if(bgDataUrl && !transparent) throw new Error('AI شیپ‌شده فعلاً پس‌زمینه تصویری را پشتیبانی نمی‌کند؛ برای پس‌زمینه تصویری PSD یا PNG بگیرید.');
+    for(const l of sorted) body+=await layerToPdfPathOps(l);
+    body+='Q\n';
+    const blob=buildVectorPdfBlob(body,pageW,pageH);
+    await saveBlobFile(blob,'FarsiType.ai','application/illustrator');
     showToast('✅ AI شیپ‌شده ذخیره شد!');
-  }catch(e){console.error(e);showToast('❌ خطا در خروجی AI');}
+  }catch(e){console.error(e);alert(e.message||'خطا در خروجی AI');}
 }
 
 async function drawOneLayerToCanvas(ctx,layer,scale=1){
