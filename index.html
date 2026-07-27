@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v7 -->
+<!-- FarsiType font pack v8 -->
 </head>
 <body>
 <div id="app">
@@ -623,13 +623,31 @@ async function exportAI(transparent,bgColor){
     showToast('✅ AI ذخیره شد!');
   }catch(e){console.error(e);showToast('❌ خطا در خروجی AI');}
 }
+function rgbHexDataFromCanvas(canvas){
+  const ctx=canvas.getContext('2d',{willReadFrequently:true});
+  const data=ctx.getImageData(0,0,canvas.width,canvas.height).data;
+  const hex=[]; for(let i=0;i<256;i++) hex[i]=i.toString(16).padStart(2,'0').toUpperCase();
+  const chunks=[]; let line='';
+  for(let i=0;i<data.length;i+=4){
+    line+=hex[data[i]]+hex[data[i+1]]+hex[data[i+2]];
+    if(line.length>=72){chunks.push(line+'\n'); line='';}
+  }
+  if(line) chunks.push(line+'\n');
+  chunks.push('>\n');
+  return chunks.join('');
+}
+function buildRawRgbEPS(canvas,pageW,pageH){
+  // Most compatible EPS mode: raw RGB + ASCIIHexDecode. Larger than JPEG EPS,
+  // but opens much more reliably in Illustrator, Corel, Preview, Affinity, etc.
+  const hexData=rgbHexDataFromCanvas(canvas);
+  return `%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%Title: FarsiType.eps\n%%LanguageLevel: 2\n%%BoundingBox: 0 0 ${Math.ceil(pageW)} ${Math.ceil(pageH)}\n%%HiResBoundingBox: 0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}\n%%Pages: 1\n%%DocumentData: Clean7Bit\n%%EndComments\n\ngsave\n0 0 translate\n${pageW.toFixed(3)} ${pageH.toFixed(3)} scale\n/DeviceRGB setcolorspace\n<<\n  /ImageType 1\n  /Width ${canvas.width}\n  /Height ${canvas.height}\n  /BitsPerComponent 8\n  /Decode [0 1 0 1 0 1]\n  /ImageMatrix [${canvas.width} 0 0 -${canvas.height} 0 ${canvas.height}]\n  /DataSource currentfile /ASCIIHexDecode filter\n>> image\n%%BeginData: ${hexData.length} ASCII Bytes\n${hexData}%%EndData\ngrestore\n%%EOF\n`;
+}
 async function exportEPS(transparent,bgColor){
   try{
+    showToast('در حال ساخت EPS سازگار...');
     const cvs=await makeFlattenedExportCanvas(transparent,bgColor);
-    const jpegBytes=await canvasToJpegBytes(cvs,.96);
     const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi;
-    const data=ascii85Encode(jpegBytes);
-    const eps=`%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%Title: FarsiType.eps\n%%LanguageLevel: 2\n%%BoundingBox: 0 0 ${Math.ceil(pageW)} ${Math.ceil(pageH)}\n%%HiResBoundingBox: 0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}\n%%Pages: 1\n%%EndComments\n/saveobj save def\ngsave\n0 0 translate\n${pageW.toFixed(3)} ${pageH.toFixed(3)} scale\n<< /ImageType 1 /Width ${canvasW} /Height ${canvasH} /BitsPerComponent 8 /ColorSpace /DeviceRGB /Decode [0 1 0 1 0 1] /ImageMatrix [${canvasW} 0 0 -${canvasH} 0 ${canvasH}] /DataSource currentfile /ASCII85Decode filter /DCTDecode filter >> image\n${data}\ngrestore\nsaveobj restore\nshowpage\n%%EOF\n`;
+    const eps=buildRawRgbEPS(cvs,pageW,pageH);
     await saveBlobFile(new Blob([eps],{type:'application/postscript'}),'FarsiType.eps','application/postscript');
     showToast('✅ EPS ذخیره شد!');
   }catch(e){console.error(e);showToast('❌ خطا در خروجی EPS');}
