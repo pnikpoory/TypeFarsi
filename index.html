@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v6 -->
+<!-- FarsiType font pack v7 -->
 </head>
 <body>
 <div id="app">
@@ -564,13 +564,80 @@ async function exportPDF(transparent,bgColor){const cvs=document.createElement('
 
 function buildPDFBlob(imgData,w,h,imgW,imgH){const clean=imgData.split(',')[1],binary=atob(clean),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const imgLen=bytes.length,cs=`q ${w} 0 0 ${h} 0 0 cm /Img1 Do Q`;let pdf='%PDF-1.4\n';const offsets=[];offsets.push(pdf.length);pdf+=`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`;offsets.push(pdf.length);pdf+=`2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n`;offsets.push(pdf.length);pdf+=`3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${w} ${h}] /Contents 4 0 R /Resources << /XObject << /Img1 5 0 R >> >> >>\nendobj\n`;offsets.push(pdf.length);pdf+=`4 0 obj\n<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\nendobj\n`;offsets.push(pdf.length);const hdr=`5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgLen} >>\nstream\n`;const end='\nendstream\nendobj\n';const xrefPos=pdf.length+hdr.length+imgLen+end.length;let xref=`xref\n0 6\n0000000000 65535 f \n`;for(const off of offsets)xref+=String(off).padStart(10,'0')+' 00000 n \n';xref+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;return new Blob([pdf+hdr,bytes,end+xref],{type:'application/pdf'});}
 
-async function exportAI(transparent,bgColor){const cvs=document.createElement('canvas');cvs.width=canvasW;cvs.height=canvasH;const ctx=cvs.getContext('2d');if(!transparent){if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,cvs.width,cvs.height);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,cvs.width,cvs.height);}}await renderAllTextToCanvas(ctx,1,bgColor,transparent);const jpgData=cvs.toDataURL('image/jpeg',0.95),pdfW=canvasW*0.75,pdfH=canvasH*0.75;let pdf='%PDF-1.4\n%\xe2\xe3\xcf\xd3\n';const offsets=[];const clean=jpgData.split(',')[1],binary=atob(clean),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const imgLen=bytes.length,cs=`q ${pdfW} 0 0 ${pdfH} 0 0 cm /Img1 Do Q`;offsets.push(pdf.length);pdf+=`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`;offsets.push(pdf.length);pdf+=`2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n`;offsets.push(pdf.length);pdf+=`3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pdfW} ${pdfH}] /Contents 4 0 R /Resources << /XObject << /Img1 5 0 R >> >> >>\nendobj\n`;offsets.push(pdf.length);pdf+=`4 0 obj\n<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\nendobj\n`;offsets.push(pdf.length);const hdr=`5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvasW} /Height ${canvasH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgLen} >>\nstream\n`;const end='\nendstream\nendobj\n';const xrefPos=pdf.length+hdr.length+imgLen+end.length;let xref=`xref\n0 6\n0000000000 65535 f \n`;for(const off of offsets)xref+=String(off).padStart(10,'0')+' 00000 n \n';xref+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;saveBlobFile(new Blob([pdf+hdr,bytes,end+xref],{type:'application/pdf'}),'FarsiType.ai','application/pdf');showToast('✅ AI ذخیره شد!');}
-
-function exportEPS(transparent,bgColor){const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));let eps=`%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%BoundingBox: 0 0 ${canvasW} ${canvasH}\n%%EndComments\n\n`;if(!transparent){const r=parseInt(bgColor.slice(1,3),16)/255,g=parseInt(bgColor.slice(3,5),16)/255,b=parseInt(bgColor.slice(5,7),16)/255;eps+=`${r} ${g} ${b} setrgbcolor\n0 0 ${canvasW} ${canvasH} rectfill\n`;}for(const l of sorted){const x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;const r=parseInt(l.color.slice(1,3),16)/255,g=parseInt(l.color.slice(3,5),16)/255,b=parseInt(l.color.slice(5,7),16)/255;eps+=`gsave\n${r} ${g} ${b} setrgbcolor\n`;let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}const ls=l.layout==='fill'?(l._fillLetterSpacing||0):l.letterSpacing;lines.forEach((line,i)=>{const psX=l.align==='center'?x+w/2:l.align==='left'?x:x+w;const psY=canvasH-startY-i*lineH-l.size*0.8;let hex='';for(let c=0;c<line.length;c++)hex+=line.charCodeAt(c).toString(16).padStart(4,'0');eps+=`${psX} ${psY} moveto <${hex}> show\n`;});eps+=`grestore\n`;}eps+=`%%EOF\n`;saveBlobFile(new Blob([eps],{type:'application/postscript'}),'FarsiType.eps','application/postscript');showToast('✅ EPS ذخیره شد!');}
+async function canvasToJpegBytes(canvas,quality=.95){
+  const blob=await new Promise(ok=>canvas.toBlob(ok,'image/jpeg',quality));
+  if(!blob) throw new Error('ساخت تصویر خروجی ناموفق بود');
+  return new Uint8Array(await blob.arrayBuffer());
+}
+function buildPdfImageBlob(jpegBytes,imgW,imgH,pageW,pageH){
+  const enc=new TextEncoder(), parts=[]; let offset=0; const offsets=[];
+  function add(str){const b=enc.encode(str); parts.push(b); offset+=b.length;}
+  function obj(n,body){offsets[n]=offset; add(`${n} 0 obj\n${body}\nendobj\n`);}
+  add('%PDF-1.5\n%\xE2\xE3\xCF\xD3\n');
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  obj(3,`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}] /Contents 4 0 R /Resources << /XObject << /Img1 5 0 R >> >> >>`);
+  const content=`q ${pageW.toFixed(3)} 0 0 ${pageH.toFixed(3)} 0 0 cm /Img1 Do Q`;
+  obj(4,`<< /Length ${enc.encode(content).length} >>\nstream\n${content}\nendstream`);
+  offsets[5]=offset;
+  add(`5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpegBytes.length} >>\nstream\n`);
+  parts.push(jpegBytes); offset+=jpegBytes.length;
+  add('\nendstream\nendobj\n');
+  const xrefPos=offset;
+  add('xref\n0 6\n0000000000 65535 f \n');
+  for(let i=1;i<=5;i++) add(String(offsets[i]).padStart(10,'0')+' 00000 n \n');
+  add(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF\n`);
+  return new Blob(parts,{type:'application/pdf'});
+}
+function ascii85Encode(bytes){
+  let out='<~', line=2;
+  function emit(s){out+=s; line+=s.length; if(line>74){out+='\n'; line=0;}}
+  for(let i=0;i<bytes.length;i+=4){
+    const rem=Math.min(4,bytes.length-i);
+    let tuple=0;
+    for(let j=0;j<4;j++) tuple=(tuple*256)+(j<rem?bytes[i+j]:0);
+    if(rem===4 && tuple===0){emit('z'); continue;}
+    const chars=new Array(5);
+    for(let j=4;j>=0;j--){chars[j]=String.fromCharCode(tuple%85+33); tuple=Math.floor(tuple/85);}
+    emit(chars.slice(0,rem+1).join(''));
+  }
+  out+='~>';
+  return out;
+}
+async function makeFlattenedExportCanvas(transparent,bgColor){
+  const cvs=document.createElement('canvas'); cvs.width=canvasW; cvs.height=canvasH;
+  const ctx=cvs.getContext('2d');
+  // AI/EPS are flattened for maximum compatibility with Illustrator/Corel/Preview.
+  if(bgImage&&bgDataUrl) ctx.drawImage(bgImage,0,0,cvs.width,cvs.height);
+  else { ctx.fillStyle=transparent?'#ffffff':bgColor; ctx.fillRect(0,0,cvs.width,cvs.height); }
+  await renderAllTextToCanvas(ctx,1,transparent?'#ffffff':bgColor,false);
+  return cvs;
+}
+async function exportAI(transparent,bgColor){
+  try{
+    const cvs=await makeFlattenedExportCanvas(transparent,bgColor);
+    const jpegBytes=await canvasToJpegBytes(cvs,.96);
+    const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi;
+    const blob=buildPdfImageBlob(jpegBytes,canvasW,canvasH,pageW,pageH);
+    await saveBlobFile(blob,'FarsiType.ai','application/illustrator');
+    showToast('✅ AI ذخیره شد!');
+  }catch(e){console.error(e);showToast('❌ خطا در خروجی AI');}
+}
+async function exportEPS(transparent,bgColor){
+  try{
+    const cvs=await makeFlattenedExportCanvas(transparent,bgColor);
+    const jpegBytes=await canvasToJpegBytes(cvs,.96);
+    const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi;
+    const data=ascii85Encode(jpegBytes);
+    const eps=`%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%Title: FarsiType.eps\n%%LanguageLevel: 2\n%%BoundingBox: 0 0 ${Math.ceil(pageW)} ${Math.ceil(pageH)}\n%%HiResBoundingBox: 0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}\n%%Pages: 1\n%%EndComments\n/saveobj save def\ngsave\n0 0 translate\n${pageW.toFixed(3)} ${pageH.toFixed(3)} scale\n<< /ImageType 1 /Width ${canvasW} /Height ${canvasH} /BitsPerComponent 8 /ColorSpace /DeviceRGB /Decode [0 1 0 1 0 1] /ImageMatrix [${canvasW} 0 0 -${canvasH} 0 ${canvasH}] /DataSource currentfile /ASCII85Decode filter /DCTDecode filter >> image\n${data}\ngrestore\nsaveobj restore\nshowpage\n%%EOF\n`;
+    await saveBlobFile(new Blob([eps],{type:'application/postscript'}),'FarsiType.eps','application/postscript');
+    showToast('✅ EPS ذخیره شد!');
+  }catch(e){console.error(e);showToast('❌ خطا در خروجی EPS');}
+}
 
 async function saveBlobFile(blob,filename,mimeType){
   const ext=filename.split('.').pop();
-  const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/postscript':[{description:'EPS',accept:{'application/postscript':['.eps']}}]};
+  const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/illustrator':[{description:'Adobe Illustrator',accept:{'application/pdf':['.ai'],'application/illustrator':['.ai']}}],'application/postscript':[{description:'EPS',accept:{'application/postscript':['.eps'],'application/eps':['.eps']}}]};
   try{
     if(window.showSaveFilePicker){
       const h=await window.showSaveFilePicker({suggestedName:filename,types:types[mimeType]||[{description:ext,accept:{'*/*':['.'+ext]}}]});
