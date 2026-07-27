@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v9 -->
+<!-- FarsiType font pack v10 -->
 </head>
 <body>
 <div id="app">
@@ -231,8 +231,8 @@ input,textarea,select{font-size:16px!important}
           <div class="export-btn" onclick="doExport('jpg')"><div class="export-btn-icon">📷</div><div class="export-btn-title">JPG</div><div class="export-btn-desc">فشرده</div></div>
           <div class="export-btn" onclick="doExport('svg')"><div class="export-btn-icon">📐</div><div class="export-btn-title">SVG</div><div class="export-btn-desc">برداری</div></div>
           <div class="export-btn" onclick="doExport('pdf')"><div class="export-btn-icon">📄</div><div class="export-btn-title">PDF</div><div class="export-btn-desc">چاپ</div></div>
-          <div class="export-btn" onclick="doExport('ai')"><div class="export-btn-icon">🎨</div><div class="export-btn-title">AI</div><div class="export-btn-desc">Illustrator</div></div>
-          <div class="export-btn" onclick="doExport('eps')"><div class="export-btn-icon">✏️</div><div class="export-btn-title">EPS</div><div class="export-btn-desc">PostScript</div></div>
+          <div class="export-btn" onclick="doExport('svg')"><div class="export-btn-icon">🎨</div><div class="export-btn-title">Illustrator</div><div class="export-btn-desc">SVG</div></div>
+          <div class="export-btn" onclick="doExport('psd')"><div class="export-btn-icon">🧩</div><div class="export-btn-title">PSD</div><div class="export-btn-desc">Photoshop</div></div>
         </div>
         <div class="made-by">Made By: <a href="https://t.me/pnikpoory" target="_blank" rel="noopener">PoOrya.npr</a></div>
       </div>
@@ -654,50 +654,90 @@ async function makeFlattenedExportCanvas(transparent,bgColor){
   await renderAllTextToCanvas(ctx,1,transparent?'#ffffff':bgColor,false);
   return cvs;
 }
-async function exportAI(transparent,bgColor){
-  try{
-    // Illustrator opens SVG as fully vector artwork and keeps transparency.
-    // The file extension is .ai for the requested workflow, but the payload is
-    // clean SVG/XML so it remains coordinate-based, editable, and transparent.
-    const svg=buildSVGString(transparent,bgColor);
-    await saveBlobFile(new Blob([svg],{type:'application/illustrator'}),'FarsiType.ai','application/illustrator');
-    showToast('✅ AI سازگار با Illustrator ذخیره شد!');
-  }catch(e){console.error(e);showToast('❌ خطا در خروجی AI');}
+async function drawOneLayerToCanvas(ctx,layer,scale=1){
+  const fontCSS=getFontCSS(layer.fontName);
+  const realFamily=primaryFontFamily(fontCSS);
+  try{await document.fonts.load(`${layer.bold?'bold ':''} ${layer.italic?'italic ':''} ${layer.size*scale}px "${realFamily}"`);}catch(e){}
+  const x=layer.cx*scale,y=layer.cy*scale,w=layer.cw*scale,h=layer.ch*scale;
+  const text=layer.inner.innerText||layer.inner.textContent;
+  const ls=layer.layout==='fill'?(layer._fillLetterSpacing||0):layer.letterSpacing;
+  ctx.save();
+  ctx.font=`${layer.bold?'bold ':''}${layer.italic?'italic ':''}${layer.size*scale}px ${fontCSS}`;
+  ctx.fillStyle=layer.color;ctx.textAlign=layer.align==='justify'?'right':layer.align;ctx.textBaseline='top';
+  if(layer.shadow){ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=8*scale;ctx.shadowOffsetX=2*scale;ctx.shadowOffsetY=2*scale;}
+  const lines=text.split('\n'),lineH=layer.size*scale*layer.lineHeight;
+  let textX;if(layer.align==='right')textX=x+w;else if(layer.align==='center')textX=x+w/2;else textX=x;
+  let startY=y;if(layer.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}
+  lines.forEach((line,i)=>{if(ls!==0){try{ctx.letterSpacing=(ls*scale)+'px';}catch(e){}}ctx.fillText(line,textX,startY+i*lineH);});
+  ctx.restore();
 }
-function psEscapeAscii(s){return String(s).replace(/[\\()]/g,'\\$&').replace(/[\u0080-\uFFFF]/g,'?');}
-function hexToRgb01(hex){hex=(hex||'#000000').replace('#','');return [parseInt(hex.slice(0,2),16)/255,parseInt(hex.slice(2,4),16)/255,parseInt(hex.slice(4,6),16)/255].map(v=>isFinite(v)?v:0);}
-async function exportEPS(transparent,bgColor){
-  try{
-    // EPS is a legacy PostScript format and has weak Unicode/font support.
-    // This export is valid vector EPS: rectangles/background + text coordinates.
-    // Persian glyph shaping in EPS depends on the importing app/font availability.
-    const dpi=getDPI(), pageW=canvasW*72/dpi, pageH=canvasH*72/dpi;
-    const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
-    let eps=`%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%Title: FarsiType.eps\n%%LanguageLevel: 2\n%%BoundingBox: 0 0 ${Math.ceil(pageW)} ${Math.ceil(pageH)}\n%%HiResBoundingBox: 0 0 ${pageW.toFixed(3)} ${pageH.toFixed(3)}\n%%Pages: 1\n%%EndComments\n\n`;
-    eps+=`${(72/dpi).toFixed(8)} ${(72/dpi).toFixed(8)} scale\n`;
-    if(!transparent && !bgDataUrl){const [r,g,b]=hexToRgb01(bgColor);eps+=`${r} ${g} ${b} setrgbcolor\n0 0 ${canvasW} ${canvasH} rectfill\n`;}
-    // If there is a background image, flatten only that background to keep file valid.
-    if(!transparent && bgImage&&bgDataUrl){
-      const bg=await makeFlattenedExportCanvas(false,bgColor);
-      const data=rgbHexDataFromCanvas(bg);
-      eps+=`gsave\n${canvasW} ${canvasH} scale\n/DeviceRGB setcolorspace\n<< /ImageType 1 /Width ${canvasW} /Height ${canvasH} /BitsPerComponent 8 /Decode [0 1 0 1 0 1] /ImageMatrix [${canvasW} 0 0 -${canvasH} 0 ${canvasH}] /DataSource currentfile /ASCIIHexDecode filter >> image\n${data}grestore\n`;
-    }
-    for(const l of sorted){
-      const [r,g,b]=hexToRgb01(l.color);const x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;
-      let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}
-      eps+=`gsave\n${r} ${g} ${b} setrgbcolor\n/Helvetica${l.bold?'-Bold':''} findfont ${l.size} scalefont setfont\n`;
-      lines.forEach((line,i)=>{const psX=l.align==='center'?x+w/2:l.align==='left'?x:x+w;const psY=canvasH-(startY+i*lineH+l.size*0.8);eps+=`${psX.toFixed(3)} ${psY.toFixed(3)} moveto (${psEscapeAscii(line)}) show\n`;});
-      eps+='grestore\n';
-    }
-    eps+='showpage\n%%EOF\n';
-    await saveBlobFile(new Blob([eps],{type:'application/postscript'}),'FarsiType.eps','application/postscript');
-    showToast('✅ EPS ذخیره شد!');
-  }catch(e){console.error(e);showToast('❌ خطا در خروجی EPS');}
+function concatArrays(arrs){let n=arrs.reduce((s,a)=>s+a.length,0),o=new Uint8Array(n),p=0;for(const a of arrs){o.set(a,p);p+=a.length;}return o;}
+function bytesOfString(s){return new TextEncoder().encode(s);}
+function u16(n){return new Uint8Array([(n>>>8)&255,n&255]);}
+function i16(n){if(n<0)n=0x10000+n;return u16(n);}
+function u32(n){return new Uint8Array([(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255]);}
+function i32(n){if(n<0)n=0x100000000+n;return u32(n>>>0);}
+function pascalName(name){
+  let clean=String(name||'Layer').replace(/[^\x20-\x7E]/g,'_').slice(0,31);
+  const b=bytesOfString(clean), len=Math.min(255,b.length), total=1+len, pad=(4-(total%4))%4;
+  return concatArrays([new Uint8Array([len]),b.slice(0,len),new Uint8Array(pad)]);
 }
+function planeFromImageData(img,channel){
+  const d=img.data, out=new Uint8Array(img.width*img.height);
+  for(let i=0,j=channel;i<out.length;i++,j+=4) out[i]=d[j];
+  return out;
+}
+async function makePsdLayerData(layer,index){
+  const c=document.createElement('canvas');c.width=canvasW;c.height=canvasH;
+  const ctx=c.getContext('2d',{willReadFrequently:true});
+  await drawOneLayerToCanvas(ctx,layer,1);
+  const img=ctx.getImageData(0,0,canvasW,canvasH);
+  c.width=c.height=0;
+  const planes=[planeFromImageData(img,0),planeFromImageData(img,1),planeFromImageData(img,2),planeFromImageData(img,3)];
+  const channelIds=[0,1,2,-1];
+  const chInfo=[];
+  for(let i=0;i<4;i++) chInfo.push(i16(channelIds[i]),u32(2+planes[i].length));
+  const extraParts=[u32(0),u32(0),pascalName('Text '+(index+1))];
+  const extra=concatArrays(extraParts);
+  const record=concatArrays([
+    i32(0),i32(0),i32(canvasH),i32(canvasW),u16(4),...chInfo,
+    bytesOfString('8BIM'),bytesOfString('norm'),new Uint8Array([255,0,8,0]),u32(extra.length),extra
+  ]);
+  const imageParts=[];
+  for(let i=0;i<4;i++) imageParts.push(u16(0),planes[i]);
+  return {record,imageData:concatArrays(imageParts)};
+}
+async function buildLayeredPSD(){
+  const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));
+  const layerObjs=[];
+  for(let i=0;i<sorted.length;i++) layerObjs.push(await makePsdLayerData(sorted[i],i));
+  const layerRecords=concatArrays(layerObjs.map(x=>x.record));
+  const layerPixels=concatArrays(layerObjs.map(x=>x.imageData));
+  const layerInfo=concatArrays([i16(layerObjs.length),layerRecords,layerPixels]);
+  const layerMask=concatArrays([u32(layerInfo.length),layerInfo,u32(0)]);
+
+  const comp=document.createElement('canvas');comp.width=canvasW;comp.height=canvasH;
+  const cctx=comp.getContext('2d',{willReadFrequently:true});
+  for(const l of sorted) await drawOneLayerToCanvas(cctx,l,1);
+  const img=cctx.getImageData(0,0,canvasW,canvasH);comp.width=comp.height=0;
+  const composite=concatArrays([u16(0),planeFromImageData(img,0),planeFromImageData(img,1),planeFromImageData(img,2),planeFromImageData(img,3)]);
+  const header=concatArrays([bytesOfString('8BPS'),u16(1),new Uint8Array(6),u16(4),u32(canvasH),u32(canvasW),u16(8),u16(3)]);
+  return new Blob([header,u32(0),u32(0),u32(layerMask.length),layerMask,composite],{type:'image/vnd.adobe.photoshop'});
+}
+async function exportPSD(){
+  try{
+    showToast('در حال ساخت PSD لایه‌باز...');
+    const blob=await buildLayeredPSD();
+    await saveBlobFile(blob,'FarsiType.psd','image/vnd.adobe.photoshop');
+    showToast('✅ PSD لایه‌باز ذخیره شد!');
+  }catch(e){console.error(e);showToast('❌ خطا در خروجی PSD');}
+}
+
+
 
 async function saveBlobFile(blob,filename,mimeType){
   const ext=filename.split('.').pop();
-  const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/illustrator':[{description:'Adobe Illustrator',accept:{'application/pdf':['.ai'],'application/illustrator':['.ai']}}],'application/postscript':[{description:'EPS',accept:{'application/postscript':['.eps'],'application/eps':['.eps']}}]};
+  const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/illustrator':[{description:'Adobe Illustrator',accept:{'application/pdf':['.ai'],'application/illustrator':['.ai']}}],'application/postscript':[{description:'EPS',accept:{'application/postscript':['.eps'],'application/eps':['.eps']}}],'image/vnd.adobe.photoshop':[{description:'Photoshop PSD',accept:{'image/vnd.adobe.photoshop':['.psd'],'application/octet-stream':['.psd']}}]};
   try{
     if(window.showSaveFilePicker){
       const h=await window.showSaveFilePicker({suggestedName:filename,types:types[mimeType]||[{description:ext,accept:{'*/*':['.'+ext]}}]});
