@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>FarsiType — تایپ فارسی آفلاین</title>
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAYAAAA9zQYyAAAGeElEQVR4nO3dS2hcVRzH8f8ZAwoFQejCRWwK3bmypq4EwY1QbG20ruIDitT22CR1I+jOPnaCtmnhCi6660rrA0HEViXYR0xbXYnYJk1iFhEKQjGgWKmLcUqumXvnkfO6//v9wGySSXJm7q8/zplzZmrkzd13BFCiEXsAgEsEGqoMiDGxxwA4Q0NDlQGhoKHIgJBoKEJDQxUaGqrQ0FCFVzmgClMOqMKUA6rQ0FCFhoYqLAqhCoeToAoNDVVUNLR9/fnYQ1AjO/Zh7CGsi5G3Ryv1FizCG16VQl6JQBPidKQebiOHXkg20Pbg7thDQIHs+Eexh9BWkoEmyNWRWrCNHE4n0HaivyCfHtoz63gotTW6cGpLPz+XTaYRbCOHX0wi0Hbiua7vS4DD6SXg2eQZn0PpipEj8QNtxzuHmRDH1024sxNxQ23kyEvRAm3Hn+14H4Kcnu6C/XGIoaxh5GicQNux8jAT5PR1CnZ2Mnyoo2x9E2YdOl2nTtfZByNHXw7a0HZspPB7BLm6yto6O/lJsHE0xIiEuhFmvcqunx0bCZaxRqi/ZA+M9PVkoDpKQ31gRELkLFxD9/EkoHpKr2eYhvbPvrar7dcJs05F17UoBy41xBjxeSPM9VQaao9589rQ1j7T04OFLoWhLsiFCyresYIK8pQ7bw1t9+9s+3XauV4KW7ogH+sVdKeQMNdTyOvuZVHo618fdLH7d1ZrUbga7Vxvoa6/840Vu29HiHFDCbtvh+uNFceJboN2hkhZDtzljw9rRHwOM+i0oe3ep92NDLXRzI2bDLqdQ7fBdAOrFebB3Rwa0INP8Eci3OSQRSHS4CiHzhaF9pXta34582e00y4Xzfzwsh00cZBFFoVQhfPQSIeDLNLQUIWGRjpoaCCPQEMVphxIB1MOII+NFaTDQRY5nISErD+LNDTSQUNDFxoamnA4CchjyoGEMOWAJiwKoQsNDU1YFAJ5HE5COjicBOTR0EgHDQ3kDcQegEsbBjcO7Dr/zlDMMZwff/+3hc+m//j/15/4YOLBwae2bogxpl5NvXpieenLqyuxx9EPphxIB1MOII+NFaSDrW/owtY3NKGhoQsNDU04nATk1XrK8efNW/+cGT44H+JvTe2dXO73Zx94eNO92784NNjt/W/NLf/9+ZNvLfb79+JhygFNWBRCFxoamrAoBPI4nIR0cDgJyKOhkQ4aGshT9Y6VXt238f57RhdObXH1+z59/I2FlaWbt139PvSOKQfSwZQDyGNjBelg6xu6sPUNTWho6EJDQxMOJwF5tZ5yhHzHCrrBlAOasCiELjQ0NGFRCORxOAnp4HASkEdDIx00NJBHoKEKUw6kgykHkMfGCtLB1jd0YesbmtDQ0IWGhiYcTgLymHIgIUw5oAmLwryVpZu3Tw/tmY09Dtd+/2nxL42Pay0aGpqwKATyOJyEdHA4CcijoZEOGhrII9BQhSkH0sGUA8hjYwXpcLOxYsTFLZv6ec0vd/l/AEKPdrlo5mf9OaShkQZHOVR1OAlV5iaHNDTS4CiH3l/lYB6N1XznwdmiUMRI9t0vPscKpZq5cZNBphyIz2EGnTZ00ciYdkCkLAfu8tdwnefswjVnTwD0yy5cc5q/YFvftHS9hbr+DTFGXN+yi9dDjB0Vl1287jx7QQ8n0dL1FPK6e2loMUayS+3fdU+o66XoemeXZr3kjuOjUMVroGnpeittZ0+8TTnuTj2m53p6sNChMMzTc17zFmTKQajrpTTMnjnfWOlhA1FECLU2pdczQM48bH23v2Xf3+jvSUBllF3H5vX3n7NwDW1EshlCrVVpmGduBMuYka/evePh8ZWyj20u/X49PjpWh05FlM3MBxpJU9CGvtvUl+dLB0VbV0PHMF+eD54tI2fDN3SL3ba5431o6/R0UzidSssXI2ffixboFrttqON9CHZ83QV5IcRQChk5Fz/QIiJ2uHOoWwh3OL1M/7IrccMsImLk3LEkAi0iYoc39fVzBNydftcv2ZVF10Ppi5Gv0wl0i320v2AjvOxqGkFuSTLQLQQ7XakFucXIN8eTDXSL3fpQ7CHgP9kPv8YeQqlKBHo1wh1e6iFezci3k5UKdDv2kcHYQ1Aj+3Ep9hDWRUWggRbeggVV+D9WoAoNDVX4sEaowif4QxUaGqrQ0FCFhoYqvMoBVZhyQBWmHFCFhoYqNDRUYVEIVTicBFVoaKjyL7T1i/yvuhsEAAAAAElFTkSuQmCC">
+<meta name="theme-color" content="#0f0f0f">
+<link rel="manifest" href="manifest.webmanifest">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#0f0f0f;--bg2:#1a1a1a;--bg3:#242424;--bg4:#2e2e2e;--accent:#00c853;--accent2:#69f0ae;--accent-dim:rgba(0,200,83,0.15);--text:#e8e8e8;--text2:#aaa;--text3:#666;--border:#333;--danger:#ff5252}
+html,body{width:100%;height:100%;overflow:hidden;font-family:system-ui,-apple-system,'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text)}
+button{font-family:inherit;cursor:pointer}input,textarea,select{font-family:inherit}
+#app{display:flex;flex-direction:column;height:100%;width:100%}
+.header{height:50px;min-height:50px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 10px;gap:6px;z-index:100}
+.header-brand{font-size:15px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;white-space:nowrap}
+.header-sep{width:1px;height:26px;background:var(--border)}
+.h-btn{background:none;border:1px solid var(--border);color:var(--text2);padding:5px 10px;border-radius:7px;font-size:11px;display:flex;align-items:center;gap:4px;transition:all .15s;white-space:nowrap}
+.h-btn:hover,.h-btn:active{background:var(--accent-dim);border-color:var(--accent);color:var(--text)}
+.h-btn.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.h-btn svg{width:15px;height:15px;flex-shrink:0}
+.h-btn:disabled{opacity:0.3;cursor:not-allowed;pointer-events:none}
+.main{flex:1;display:flex;overflow:hidden}
+.sidebar{width:290px;min-width:290px;background:var(--bg2);border-left:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+@media(max-width:768px){.sidebar{position:fixed;right:0;top:50px;bottom:0;width:300px;min-width:0;z-index:200;transform:translateX(100%);transition:transform .3s ease}.sidebar.open{transform:translateX(0)}}
+.sidebar-section{padding:12px;border-bottom:1px solid var(--border)}
+.sidebar-title{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:5px}
+.sidebar-title svg{width:13px;height:13px}
+.add-font-btn{width:100%;padding:8px;background:var(--bg3);border:1px dashed var(--border);border-radius:7px;color:var(--text2);font-size:11px;display:flex;align-items:center;justify-content:center;gap:5px;transition:all .15s;margin-top:5px}
+.add-font-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.add-font-btn svg{width:14px;height:14px}
+.remove-bg-btn{width:100%;padding:7px;background:rgba(255,82,82,0.08);border:1px solid rgba(255,82,82,0.2);border-radius:7px;color:#ff5252;font-size:11px;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s;margin-top:6px;cursor:pointer}
+.remove-bg-btn:hover{background:rgba(255,82,82,0.15);border-color:rgba(255,82,82,0.4)}
+.remove-bg-btn svg{width:13px;height:13px}
+.setting-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.setting-label{font-size:11px;color:var(--text2);min-width:55px}
+.setting-row input[type="number"]{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 6px;border-radius:5px;font-size:11px;width:65px;text-align:center}
+.setting-row input[type="color"]{width:32px;height:26px;border:1px solid var(--border);border-radius:5px;background:var(--bg3);cursor:pointer;padding:2px}
+.setting-row input[type="range"]{flex:1;accent-color:var(--accent);height:4px}
+.setting-row select{background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px 6px;border-radius:5px;font-size:11px;flex:1;max-width:100%}
+.unit-label{font-size:10px;color:var(--text3);min-width:18px}
+.toggle-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.toggle-label{font-size:11px;color:var(--text2)}
+.toggle{width:36px;height:20px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;position:relative;cursor:pointer;transition:all .2s}
+.toggle.on{background:var(--accent);border-color:var(--accent)}
+.toggle::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:2px;right:2px;transition:all .2s}
+.toggle.on::after{right:18px}
+.layout-options{display:flex;gap:4px;margin-bottom:8px}
+.layout-opt{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 4px;text-align:center;cursor:pointer;transition:all .15s;font-size:10px;color:var(--text2)}
+.layout-opt:hover{border-color:var(--accent);color:var(--text)}
+.layout-opt.active{background:var(--accent-dim);border-color:var(--accent);color:var(--accent)}
+.layout-opt svg{width:18px;height:18px;display:block;margin:0 auto 3px}
+.export-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:6px}
+.export-btn{background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .15s;color:var(--text)}
+.export-btn:hover{border-color:var(--accent);background:var(--accent-dim)}
+.export-btn-icon{font-size:18px;margin-bottom:2px}
+.export-btn-title{font-size:10px;font-weight:600}
+.export-btn-desc{font-size:8px;color:var(--text3);line-height:1.2}
+.canvas-area{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.canvas-container{flex:1;overflow:auto;display:flex;align-items:center;justify-content:center;padding:20px;position:relative}
+.canvas-paper{position:relative;box-shadow:0 4px 30px rgba(0,0,0,0.5);overflow:hidden;cursor:crosshair}
+.canvas-paper.mode-select{cursor:default}
+.canvas-paper.mode-draw{cursor:crosshair}
+.draw-rect{position:absolute;border:1.5px dashed var(--accent);background:rgba(0,200,83,0.05);pointer-events:none;z-index:50;border-radius:2px}
+.text-layer{position:absolute;overflow:visible;min-width:30px;min-height:20px;outline:1px dashed transparent;transition:outline .15s}
+.text-layer:hover{outline:1px dashed rgba(255,255,255,0.15)}
+.text-layer.selected{outline:2px solid var(--accent)}
+.text-layer-inner{white-space:pre-wrap;word-break:break-word;direction:rtl;text-align:right;line-height:1.8;width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column;justify-content:flex-start;cursor:text;outline:none;user-select:text;-webkit-user-select:text}
+.text-layer-inner.layout-center{justify-content:center}
+.text-layer-inner *,.text-layer-inner *::selection{font-family:inherit!important}
+.text-layer-inner::selection{background:rgba(0,200,83,0.35)}
+.move-handle{position:absolute;top:-22px;left:50%;transform:translateX(-50%);width:40px;height:16px;background:var(--bg3);border:1px solid var(--border);border-radius:4px 4px 0 0;cursor:grab;display:none;align-items:center;justify-content:center;z-index:20;opacity:0.6;transition:opacity .15s;user-select:none;-webkit-user-select:none}
+.move-handle:hover{opacity:1;background:var(--accent-dim);border-color:var(--accent)}
+.move-handle:active{cursor:grabbing}
+.move-handle svg{width:12px;height:12px;fill:var(--text2)}
+.text-layer.selected .move-handle,.text-layer:hover .move-handle{display:flex}
+.text-layer .resize-handle{position:absolute;width:10px;height:10px;background:var(--accent);border-radius:2px;z-index:20;cursor:nwse-resize;opacity:0;transition:opacity .15s;user-select:none;-webkit-user-select:none}
+.text-layer.selected .resize-handle,.text-layer:hover .resize-handle{opacity:1}
+.text-layer .resize-handle-sw{bottom:-5px;left:-5px}
+.text-layer .resize-handle-se{bottom:-5px;right:-5px;cursor:nesw-resize}
+.text-layer .resize-handle-nw{top:-5px;left:-5px;cursor:nesw-resize}
+.text-layer .resize-handle-ne{top:-5px;right:-5px;cursor:nwse-resize}
+.add-text-zone{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:5}
+.add-text-hint{color:var(--text3);font-size:13px;text-align:center;padding:20px;line-height:2}
+.sidebar-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:199;display:none}
+.sidebar-overlay.visible{display:block}
+#fontFileInput,#bgFileInput{display:none}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:10px;font-size:12px;z-index:9500;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+
+/* iPadOS/PWA compatibility fixes */
+html{height:-webkit-fill-available;height:100dvh;overscroll-behavior:none}
+body{min-height:-webkit-fill-available;min-height:100dvh;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom);overscroll-behavior:none}
+#app{height:calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom));min-height:0}
+.canvas-container{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.sidebar{padding-bottom:calc(12px + env(safe-area-inset-bottom))!important;-webkit-overflow-scrolling:touch}
+.text-layer-inner{-webkit-user-select:text;user-select:text;cursor:text}
+button,.export-btn,.tool-btn{-webkit-user-select:none;user-select:none;touch-action:manipulation}
+input,textarea,select,.text-layer-inner{font-size:16px!important}
+@supports (-webkit-touch-callout:none){
+  .header{padding-top:0}
+  .modal-content{max-height:calc(100dvh - 40px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <span class="header-brand">FarsiType</span>
+    <div class="header-sep"></div>
+    <button class="h-btn active" id="btnDrawMode" onclick="setMode('draw')" title="رسم کادر متن">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="1"/></svg>
+      رسم کادر
+    </button>
+    <button class="h-btn" id="btnSelectMode" onclick="setMode('select')" title="انتخاب و جابجایی">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+      انتخاب
+    </button>
+    <button class="h-btn" id="btnDelete" onclick="deleteSelected()" title="حذف">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2v2"/></svg>
+      حذف
+    </button>
+    <div class="header-sep"></div>
+    <button class="h-btn" id="btnUndo" onclick="undo()" title="آندو (Ctrl+Z)" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="1,4 1,10 7,10"/><path d="M3.51,15a9,9,0,1,0,2.13-9.36L1,10"/></svg>
+      آندو
+    </button>
+    <button class="h-btn" id="btnRedo" onclick="redo()" title="ریدو (Ctrl+Y)" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="23,4 23,10 17,10"/><path d="M20.49,15a9,9,0,1,1-2.13-9.36L23,10"/></svg>
+      ریدو
+    </button>
+    <div style="flex:1"></div>
+    <button class="h-btn" onclick="toggleSidebar()" id="sidebarToggle" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
+      تنظیمات
+    </button>
+  </div>
+
+  <div class="main">
+    <div class="sidebar" id="sidebar">
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+          فونت‌ها
+        </div>
+        <button class="add-font-btn" onclick="document.getElementById('fontFileInput').click()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          افزودن فونت از حافظه
+        </button>
+        <input type="file" id="fontFileInput" accept=".ttf,.otf,.woff,.woff2" multiple>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          تنظیمات متن
+        </div>
+        <div class="setting-row"><span class="setting-label">فونت:</span><select id="selFont" onchange="onFontSelect()"></select></div>
+        <div class="setting-row"><span class="setting-label">اندازه:</span><input type="number" id="txtSize" value="48" min="6" max="500" onchange="updateSelected()" oninput="updateSelected()"><span class="unit-label">pt</span></div>
+        <div class="setting-row"><span class="setting-label">رنگ:</span><input type="color" id="txtColor" value="#ffffff" onchange="updateSelected()" oninput="updateSelected()"><input type="text" id="txtColorHex" value="#ffffff" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px;border-radius:5px;font-size:10px;width:70px" onchange="document.getElementById('txtColor').value=this.value;updateSelected()"></div>
+        <div class="setting-row"><span class="setting-label">فاصله خط:</span><input type="range" id="txtLineH" min="0.8" max="3" step="0.1" value="1.8" onchange="updateSelected()" oninput="updateSelected()"><span id="lineHVal" style="font-size:10px;color:var(--text3);min-width:24px">1.8</span></div>
+        <div class="setting-row"><span class="setting-label">فاصله حرف:</span><input type="range" id="txtLetterSp" min="-5" max="20" step="0.5" value="0" onchange="updateSelected()" oninput="updateSelected()"><span id="letterSpVal" style="font-size:10px;color:var(--text3);min-width:24px">0</span></div>
+        <div class="setting-row"><span class="setting-label">تراز:</span><select id="txtAlign" onchange="updateSelected()"><option value="right">راست</option><option value="center">وسط</option><option value="left">چپ</option><option value="justify">هم‌تراز</option></select></div>
+        <div class="toggle-row"><span class="toggle-label">بولد</span><div class="toggle" id="toggleBold" onclick="this.classList.toggle('on');updateSelected()"></div></div>
+        <div class="toggle-row"><span class="toggle-label">ایتالیک</span><div class="toggle" id="toggleItalic" onclick="this.classList.toggle('on');updateSelected()"></div></div>
+        <div class="toggle-row"><span class="toggle-label">سایه متن</span><div class="toggle" id="toggleShadow" onclick="this.classList.toggle('on');updateSelected()"></div></div>
+
+        <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border)">
+          <div class="sidebar-title" style="margin-bottom:6px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="21" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="21" y1="18" x2="3" y2="18"/></svg>
+            چیدمان متن در کادر
+          </div>
+          <div class="layout-options">
+            <div class="layout-opt active" data-layout="normal" onclick="setLayout('normal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><line x1="7" y1="7" x2="17" y2="7"/><line x1="7" y1="11" x2="14" y2="11"/></svg>معمولی</div>
+            <div class="layout-opt" data-layout="center" onclick="setLayout('center')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><line x1="7" y1="12" x2="17" y2="12"/></svg>وسط‌چین</div>
+            <div class="layout-opt" data-layout="fill" onclick="setLayout('fill')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="1"/><line x1="5" y1="5" x2="19" y2="5"/><line x1="5" y1="9" x2="19" y2="9"/><line x1="5" y1="13" x2="19" y2="13"/><line x1="5" y1="17" x2="19" y2="17"/></svg>پرکردن</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+          صفحه و پس‌زمینه
+        </div>
+        <div class="setting-row"><span class="setting-label">عرض:</span><input type="number" id="canvasWcm" value="10" min="1" max="200" step="0.1" onchange="onCanvasCmChange()"><span class="unit-label">cm</span></div>
+        <div class="setting-row"><span class="setting-label">ارتفاع:</span><input type="number" id="canvasHcm" value="10" min="1" max="200" step="0.1" onchange="onCanvasCmChange()"><span class="unit-label">cm</span></div>
+        <div class="setting-row"><span class="setting-label">رزولوشن:</span><input type="number" id="canvasDPI" value="300" min="72" max="1200" step="1" onchange="onCanvasCmChange()"><span class="unit-label">DPI</span></div>
+        <div id="pixelInfo" style="font-size:10px;color:var(--text3);margin-bottom:8px;padding:4px 8px;background:var(--bg3);border-radius:5px;text-align:center"></div>
+        <div class="setting-row"><span class="setting-label">رنگ:</span><input type="color" id="canvasBg" value="#1a1a1a" onchange="updateCanvasBg()"></div>
+        <div class="toggle-row"><span class="toggle-label">پس‌زمینه شفاف</span><div class="toggle" id="toggleTransparent" onclick="this.classList.toggle('on');updateCanvasBg()"></div></div>
+        <button class="add-font-btn" onclick="document.getElementById('bgFileInput').click()" style="margin-top:6px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          افزودن تصویر پس‌زمینه
+        </button>
+        <input type="file" id="bgFileInput" accept="image/*">
+        <button class="remove-bg-btn" id="removeBgBtn" onclick="removeBg()" style="display:none">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3,6 5,6 21,6"/><path d="M19,6v14a2,2,0,0,1-2,2H7a2,2,0,0,1-2-2V6m3,0V4a2,2,0,0,1,2-2h4a2,2,0,0,1,2,2v2"/></svg>
+          حذف پس‌زمینه
+        </button>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          خروجی گرفتن
+        </div>
+        <div class="export-grid">
+          <div class="export-btn" onclick="doExport('png')"><div class="export-btn-icon">🖼️</div><div class="export-btn-title">PNG</div><div class="export-btn-desc">شفاف</div></div>
+          <div class="export-btn" onclick="doExport('jpg')"><div class="export-btn-icon">📷</div><div class="export-btn-title">JPG</div><div class="export-btn-desc">فشرده</div></div>
+          <div class="export-btn" onclick="doExport('svg')"><div class="export-btn-icon">📐</div><div class="export-btn-title">SVG</div><div class="export-btn-desc">برداری</div></div>
+          <div class="export-btn" onclick="doExport('pdf')"><div class="export-btn-icon">📄</div><div class="export-btn-title">PDF</div><div class="export-btn-desc">چاپ</div></div>
+          <div class="export-btn" onclick="doExport('ai')"><div class="export-btn-icon">🎨</div><div class="export-btn-title">AI</div><div class="export-btn-desc">Illustrator</div></div>
+          <div class="export-btn" onclick="doExport('eps')"><div class="export-btn-icon">✏️</div><div class="export-btn-title">EPS</div><div class="export-btn-desc">PostScript</div></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="canvas-area">
+      <div class="canvas-container" id="canvasContainer">
+        <div class="canvas-paper mode-draw" id="canvasPaper" style="width:540px;height:540px;background:#1a1a1a">
+          <div class="add-text-zone" id="addTextZone">
+            <div class="add-text-hint">📐 روی صفحه کلیک کن و بکش تا کادر متن رسم بشه<br>بعد از رسم کادر، متن خود را تایپ کنید</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+let fonts={}, fontCounter=0, layers=[], selectedLayer=null, dragState=null;
+let bgImage=null, bgDataUrl=null, currentMode='draw', isDrawing=false, drawStart=null, drawRect=null, currentLayout='normal';
+let canvasW=1181, canvasH=1181;
+
+const paper=document.getElementById('canvasPaper'), container=document.getElementById('canvasContainer'), addTextZone=document.getElementById('addTextZone');
+
+const builtinFonts=[
+  {name:'یکان',css:'B Yekan, Yekan, BYekan, Tahoma'},
+  {name:'یکان باخ',css:'Yekan Bakh, B Yekan Bakh, YekanBakh, Tahoma'},
+  {name:'یکان تیتر',css:'B Titr, Titr, BTitr, Tahoma'},
+  {name:'نستعلیق',css:'IranNastaliq, B Nastaliq, Nastaliq, Tahoma'},
+  {name:'نازنین',css:'B Nazanin, Nazanin, BNazanin, Tahoma'},
+  {name:'نازنین بلد',css:'B Nazanin Bold, Nazanin Bold, BNazaninBold, Tahoma'},
+  {name:'زر',css:'B Zar, Zar, BZar, Tahoma'},
+  {name:'زر بلد',css:'B Zar Bold, Zar Bold, BZarBold, Tahoma'},
+  {name:'کودک',css:'B Koodak, Koodak, BKoodak, Tahoma'},
+  {name:'ثلث',css:'B Thulth, Thulth, BThulth, Tahoma'},
+];
+
+let layerFontStyles={};
+
+// ===== UNDO / REDO =====
+let historyStack=[], historyIndex=-1, historyEnabled=true;
+
+function captureState(){
+  return {
+    layers: layers.map(l=>({
+      id:l.id, cx:l.cx, cy:l.cy, cw:l.cw, ch:l.ch,
+      text:l.inner.innerText||l.inner.textContent,
+      fontName:l.fontName, size:l.size, color:l.color,
+      bold:l.bold, italic:l.italic, align:l.align,
+      lineHeight:l.lineHeight, letterSpacing:l.letterSpacing,
+      shadow:l.shadow, layout:l.layout
+    })),
+    canvasW, canvasH,
+    bgColor:document.getElementById('canvasBg').value,
+    bgDataUrl:bgDataUrl||null,
+    transparent:document.getElementById('toggleTransparent').classList.contains('on')
+  };
+}
+
+function historyPush(){
+  if(!historyEnabled) return;
+  historyStack=historyStack.slice(0,historyIndex+1);
+  historyStack.push(captureState());
+  historyIndex=historyStack.length-1;
+  updateUndoRedoButtons();
+}
+
+function historyPushBefore(){
+  if(!historyEnabled) return;
+  if(historyIndex>=0){
+    const last=historyStack[historyIndex], cur=captureState();
+    if(last.layers.length===cur.layers.length){
+      let same=true;
+      for(let i=0;i<cur.layers.length;i++){
+        if(last.layers[i].cx!==cur.layers[i].cx||last.layers[i].cy!==cur.layers[i].cy||last.layers[i].text!==cur.layers[i].text){same=false;break;}
+      }
+      if(same) return;
+    }
+  }
+  historyPush();
+}
+
+function updateUndoRedoButtons(){
+  document.getElementById('btnUndo').disabled=(historyIndex<=0);
+  document.getElementById('btnRedo').disabled=(historyIndex>=historyStack.length-1);
+}
+
+function undo(){if(historyIndex<=0) return; historyIndex--; restoreState(historyStack[historyIndex]); showToast('↩️ آندو');}
+function redo(){if(historyIndex>=historyStack.length-1) return; historyIndex++; restoreState(historyStack[historyIndex]); showToast('↪️ ریدو');}
+
+function restoreState(snap){
+  historyEnabled=false;
+  layers.forEach(l=>{if(layerFontStyles[l.id]){layerFontStyles[l.id].remove();delete layerFontStyles[l.id];} l.el.remove();});
+  layers=[]; selectedLayer=null;
+  canvasW=snap.canvasW; canvasH=snap.canvasH;
+  document.getElementById('canvasWcm').value=(canvasW*2.54/300).toFixed(1);
+  document.getElementById('canvasHcm').value=(canvasH*2.54/300).toFixed(1);
+  document.getElementById('canvasBg').value=snap.bgColor;
+  document.getElementById('toggleTransparent').classList.toggle('on',snap.transparent);
+  bgDataUrl=snap.bgDataUrl;
+  if(bgDataUrl){bgImage=new Image();bgImage.src=bgDataUrl;}else{bgImage=null;}
+  document.getElementById('removeBgBtn').style.display=bgDataUrl?'flex':'none';
+  updateCanvasBg(); updateCanvasSize();
+  for(const ls of snap.layers){
+    const el=document.createElement('div');el.className='text-layer';el.id=ls.id;
+    const inner=document.createElement('div');inner.className='text-layer-inner';inner.contentEditable='true';
+    if(ls.layout==='center')inner.classList.add('layout-center');if(ls.layout==='fill')inner.classList.add('layout-fill');
+    inner.textContent=ls.text;
+    const mh=document.createElement('div');mh.className='move-handle';mh.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 6l4-4 4 4M8 18l4 4 4-4M6 8l-4 4 4 4M18 8l4 4-4 4"/></svg>';
+    el.appendChild(mh);
+    ['nw','ne','sw','se'].forEach(h=>{const rh=document.createElement('div');rh.className='resize-handle resize-handle-'+h;rh.dataset.handle=h;el.appendChild(rh);});
+    el.appendChild(inner); paper.appendChild(el);
+    const layer={id:ls.id,el,inner,cx:ls.cx,cy:ls.cy,cw:ls.cw,ch:ls.ch,text:ls.text,fontName:ls.fontName,size:ls.size,color:ls.color,bold:ls.bold,italic:ls.italic,align:ls.align,lineHeight:ls.lineHeight,letterSpacing:ls.letterSpacing,shadow:ls.shadow,layout:ls.layout};
+    layers.push(layer); applyLayerPosition(layer); applyLayerVisuals(layer); applyFontToLayer(layer);
+    attachLayerEvents(layer);
+  }
+  if(!layers.length) addTextZone.style.display='flex'; else addTextZone.style.display='none';
+  updateUndoRedoButtons(); historyEnabled=true;
+}
+
+// ===== SCALE =====
+function getScale(){return paper.offsetWidth/canvasW;}
+function viewportToCSS(cx,cy){const r=paper.getBoundingClientRect();return{x:cx-r.left,y:cy-r.top};}
+function viewportToCanvas(cx,cy){const r=paper.getBoundingClientRect(),s=getScale();return{x:(cx-r.left)/s,y:(cy-r.top)/s};}
+
+// ===== CM <-> PX =====
+function cmToPx(cm,dpi){return Math.round(cm*dpi/2.54);}
+function onCanvasCmChange(){
+  const w=parseFloat(document.getElementById('canvasWcm').value)||10,h=parseFloat(document.getElementById('canvasHcm').value)||10,dpi=parseInt(document.getElementById('canvasDPI').value)||300;
+  const nw=cmToPx(w,dpi),nh=cmToPx(h,dpi);
+  if(nw!==canvasW||nh!==canvasH){historyPushBefore();canvasW=nw;canvasH=nh;historyPush();}
+  document.getElementById('pixelInfo').textContent=`${canvasW} × ${canvasH} px  |  ${w} × ${h} cm  |  ${dpi} DPI`;
+  updateCanvasSize();
+}
+function getDPI(){return parseInt(document.getElementById('canvasDPI').value)||300;}
+
+// ===== FONTS =====
+function getFontCSS(name){if(!name)return'Tahoma, Arial';const bf=builtinFonts.find(f=>f.name===name);if(bf)return bf.css;if(fonts[name])return'"'+fonts[name].family+'", Tahoma, Arial';return'Tahoma, Arial';}
+function refreshFontDropdown(){const sel=document.getElementById('selFont'),cv=sel.value;sel.innerHTML='';builtinFonts.forEach(bf=>{const o=document.createElement('option');o.value=bf.name;o.textContent=bf.name;sel.appendChild(o);});Object.keys(fonts).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n+' ★';sel.appendChild(o);});if(cv)sel.value=cv;}
+function initFonts(){try{const s=localStorage.getItem('farsitype_fonts');if(s){JSON.parse(s)&&Object.entries(JSON.parse(s)).forEach(([n,d])=>{const fn='UserFont_'+(++fontCounter)+'_'+n.replace(/[^a-zA-Z0-9]/g,'_'),st=document.createElement('style');st.textContent=`@font-face{font-family:"${fn}";src:url("${d.src}") format("${d.format}");font-display:swap}`;document.head.appendChild(st);fonts[n]={family:fn,style:st,custom:true,src:d.src,format:d.format};});}}catch(e){}refreshFontDropdown();onCanvasCmChange();}
+function saveFontsToStorage(){try{const s={};Object.entries(fonts).forEach(([n,f])=>{if(f.custom)s[n]={src:f.src,format:f.format};});localStorage.setItem('farsitype_fonts',JSON.stringify(s));}catch(e){showToast('⚠️ حافظه پر شد — فونت‌ها در جلسه بعد ذخیره نمیشن');}}
+document.getElementById('fontFileInput').addEventListener('change',(e)=>{const files=e.target.files;if(!files||!files.length)return;for(const file of files){const reader=new FileReader();reader.onload=()=>{const name=file.name.replace(/\.(ttf|otf|woff|woff2)$/i,''),ext=file.name.split('.').pop().toLowerCase();let fmt='truetype';if(ext==='woff')fmt='woff';if(ext==='woff2')fmt='woff2';if(ext==='otf')fmt='opentype';const fn='UserFont_'+(++fontCounter)+'_'+name.replace(/[^a-zA-Z0-9]/g,'_'),st=document.createElement('style');st.textContent=`@font-face{font-family:"${fn}";src:url("${reader.result}") format("${fmt}");font-display:swap}`;document.head.appendChild(st);fonts[name]={family:fn,style:st,custom:true,src:reader.result,format:fmt};saveFontsToStorage();refreshFontDropdown();showToast('✅ فونت «'+name+'» اضافه شد');};reader.readAsDataURL(file);}e.target.value='';});
+
+// ===== RESPONSIVE =====
+function checkResponsive(){const w=window.innerWidth;document.getElementById('sidebarToggle').style.display=w<=768?'flex':'none';if(w>768){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('visible');}}
+window.addEventListener('resize',()=>{checkResponsive();updateCanvasSize();});checkResponsive();
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('visible');}
+function setMode(m){currentMode=m;document.getElementById('btnDrawMode').classList.toggle('active',m==='draw');document.getElementById('btnSelectMode').classList.toggle('active',m==='select');paper.className='canvas-paper mode-'+m;}
+function onFontSelect(){if(!selectedLayer)return;selectedLayer.fontName=document.getElementById('selFont').value;applyFontToLayer(selectedLayer);}
+
+function applyFontToLayer(layer){if(!layer)return;const ff=getFontCSS(layer.fontName);if(layerFontStyles[layer.id]){layerFontStyles[layer.id].remove();delete layerFontStyles[layer.id];}const st=document.createElement('style');st.textContent=`#${layer.id} .text-layer-inner, #${layer.id} .text-layer-inner *, #${layer.id} .text-layer-inner div, #${layer.id} .text-layer-inner span, #${layer.id} .text-layer-inner br { font-family: ${ff} !important; }`;document.head.appendChild(st);layerFontStyles[layer.id]=st;layer.inner.style.fontFamily=ff;if(layer.layout==='fill')autoFitText(layer);}
+
+// ===== DRAWING =====
+paper.addEventListener('mousedown',onCanvasMouseDown);
+paper.addEventListener('touchstart',onCanvasTouchStart,{passive:false});
+function onCanvasMouseDown(e){if(e.target.closest('.text-layer'))return;if(currentMode==='draw'){startDraw(e.clientX,e.clientY);document.addEventListener('mousemove',onDrawMouseMove);document.addEventListener('mouseup',onDrawMouseUp);}else{if(selectedLayer){selectedLayer.el.classList.remove('selected');selectedLayer=null;}}}
+function onCanvasTouchStart(e){if(e.target.closest('.text-layer'))return;if(currentMode==='draw'){const t=e.touches[0];startDraw(t.clientX,t.clientY);document.addEventListener('touchmove',onDrawTouchMove,{passive:false});document.addEventListener('touchend',onDrawTouchEnd);}}
+function startDraw(cx,cy){const css=viewportToCSS(cx,cy);isDrawing=true;drawStart={cssX:css.x,cssY:css.y};drawRect=document.createElement('div');drawRect.className='draw-rect';drawRect.style.left=css.x+'px';drawRect.style.top=css.y+'px';drawRect.style.width='0px';drawRect.style.height='0px';paper.appendChild(drawRect);}
+function onDrawMouseMove(e){updateDraw(e.clientX,e.clientY);}
+function onDrawTouchMove(e){e.preventDefault();updateDraw(e.touches[0].clientX,e.touches[0].clientY);}
+function updateDraw(cx,cy){if(!isDrawing||!drawRect)return;const css=viewportToCSS(cx,cy);drawRect.style.left=Math.min(drawStart.cssX,css.x)+'px';drawRect.style.top=Math.min(drawStart.cssY,css.y)+'px';drawRect.style.width=Math.abs(css.x-drawStart.cssX)+'px';drawRect.style.height=Math.abs(css.y-drawStart.cssY)+'px';}
+function onDrawMouseUp(e){endDraw(e.clientX,e.clientY);document.removeEventListener('mousemove',onDrawMouseMove);document.removeEventListener('mouseup',onDrawMouseUp);}
+function onDrawTouchEnd(e){endDraw(e.changedTouches[0].clientX,e.changedTouches[0].clientY);document.removeEventListener('touchmove',onDrawTouchMove);document.removeEventListener('touchend',onDrawTouchEnd);}
+function endDraw(cx,cy){if(!isDrawing)return;isDrawing=false;if(drawRect){drawRect.remove();drawRect=null;}const c1=viewportToCanvas(drawStart.cssX+paper.getBoundingClientRect().left,drawStart.cssY+paper.getBoundingClientRect().top),c2=viewportToCanvas(cx,cy);const x=Math.min(c1.x,c2.x),y=Math.min(c1.y,c2.y),w=Math.abs(c2.x-c1.x),h=Math.abs(c2.y-c1.y);if(w<20||h<15){showToast('⚠️ کادر خیلی کوچک');return;}addTextLayer(x,y,w,h);}
+
+// ===== TEXT LAYERS =====
+function addTextLayer(cx,cy,cw,ch){
+  addTextZone.style.display='none';
+  const id='layer_'+Date.now()+'_'+Math.random().toString(36).substr(2,4);
+  const el=document.createElement('div');el.className='text-layer';el.id=id;
+  const inner=document.createElement('div');inner.className='text-layer-inner';inner.contentEditable='true';
+  if(currentLayout==='center')inner.classList.add('layout-center');if(currentLayout==='fill')inner.classList.add('layout-fill');
+  inner.textContent='متن خود را تایپ کنید';
+  // Move handle
+  const mh=document.createElement('div');mh.className='move-handle';mh.innerHTML='<svg viewBox="0 0 24 24"><path d="M8 6l4-4 4 4M8 18l4 4 4-4M6 8l-4 4 4 4M18 8l4 4-4 4"/></svg>';
+  // Resize handles
+  ['nw','ne','sw','se'].forEach(h=>{const rh=document.createElement('div');rh.className='resize-handle resize-handle-'+h;rh.dataset.handle=h;el.appendChild(rh);});
+  el.appendChild(mh);el.appendChild(inner);paper.appendChild(el);
+  const layer={id,el,inner,cx,cy,cw,ch,text:'متن خود را تایپ کنید',fontName:document.getElementById('selFont').value||'یکان',size:parseInt(document.getElementById('txtSize').value)||48,color:document.getElementById('txtColor').value||'#ffffff',bold:document.getElementById('toggleBold').classList.contains('on'),italic:document.getElementById('toggleItalic').classList.contains('on'),align:document.getElementById('txtAlign').value||'right',lineHeight:parseFloat(document.getElementById('txtLineH').value)||1.8,letterSpacing:parseFloat(document.getElementById('txtLetterSp').value)||0,shadow:document.getElementById('toggleShadow').classList.contains('on'),layout:currentLayout};
+  layers.push(layer);applyLayerPosition(layer);applyLayerVisuals(layer);applyFontToLayer(layer);selectLayer(layer);
+  // Select all text in new layer so user can start typing immediately
+  setTimeout(()=>{inner.focus();try{const r=document.createRange();r.selectNodeContents(inner);const s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e){}},50);
+  historyPush();attachLayerEvents(layer);
+}
+
+function attachLayerEvents(layer){
+  const el=layer.el, inner=layer.inner;
+  // Click on inner → select layer (browser handles cursor natively)
+  inner.addEventListener('mousedown',(e)=>{
+    e.stopPropagation(); // don't let canvas handler fire
+    selectLayer(layer);
+    // Let browser handle cursor placement natively — do NOT preventDefault
+  });
+  inner.addEventListener('touchstart',(e)=>{e.stopPropagation();selectLayer(layer);},{passive:true});
+  // Double-click on inner → select all text
+  inner.addEventListener('dblclick',(e)=>{
+    e.stopPropagation();
+    try{const r=document.createRange();r.selectNodeContents(inner);const s=window.getSelection();s.removeAllRanges();s.addRange(r);}catch(e2){}
+  });
+  // Save text changes when focus leaves inner
+  inner.addEventListener('blur',()=>{
+    const prev=layer.text;layer.text=inner.innerText||inner.textContent;
+    if(layer.layout==='fill')autoFitText(layer);
+    if(prev!==layer.text)historyPush();
+  });
+  // Move handle
+  const mh=el.querySelector('.move-handle');
+  mh.addEventListener('mousedown',(e)=>{e.preventDefault();e.stopPropagation();selectLayer(layer);startMove(e,layer);});
+  mh.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();selectLayer(layer);startTouchMove(e,layer);},{passive:false});
+  // Resize handles
+  ['nw','ne','sw','se'].forEach(h=>{
+    const rh=el.querySelector('.resize-handle-'+h);
+    rh.addEventListener('mousedown',(e)=>{e.preventDefault();e.stopPropagation();selectLayer(layer);startResize(e,layer,h);});
+    rh.addEventListener('touchstart',(e)=>{e.preventDefault();e.stopPropagation();selectLayer(layer);startTouchResize(e,layer,h);},{passive:false});
+  });
+  // Prevent clicks on el (but not inner) from reaching canvas
+  el.addEventListener('mousedown',(e)=>{e.stopPropagation();});
+}
+
+// ===== POSITION & VISUALS =====
+function applyLayerPosition(layer){const s=getScale();layer.el.style.left=(layer.cx*s)+'px';layer.el.style.top=(layer.cy*s)+'px';layer.el.style.width=(layer.cw*s)+'px';layer.el.style.height=(layer.ch*s)+'px';}
+function applyLayerVisuals(layer){const s=getScale();layer.inner.style.fontSize=(layer.size*s)+'px';layer.inner.style.color=layer.color;layer.inner.style.fontWeight=layer.bold?'bold':'normal';layer.inner.style.fontStyle=layer.italic?'italic':'normal';layer.inner.style.textAlign=layer.align;layer.inner.style.lineHeight=layer.lineHeight;layer.inner.style.textShadow=layer.shadow?'2px 2px 8px rgba(0,0,0,0.5)':'none';layer.inner.classList.remove('layout-center','layout-fill');if(layer.layout==='center')layer.inner.classList.add('layout-center');if(layer.layout==='fill')layer.inner.classList.add('layout-fill');if(layer.layout==='fill'){autoFitText(layer);}else{layer._fillLetterSpacing=0;layer.inner.style.letterSpacing=(layer.letterSpacing*s)+'px';}}
+
+function autoFitText(layer){const boxW=layer.cw,text=layer.inner.innerText||layer.inner.textContent;if(!text||!boxW)return;const lines=text.split('\n'),ff=getFontCSS(layer.fontName);const ts=document.createElement('span');ts.style.cssText=`font-family:${ff};font-weight:${layer.bold?'bold':'normal'};font-style:${layer.italic?'italic':'normal'};visibility:hidden;position:absolute;white-space:nowrap;direction:rtl;font-size:${layer.size}px;letter-spacing:0px`;document.body.appendChild(ts);let max=0;for(const line of lines){if(!line.trim())continue;ts.textContent=line;const nw=ts.offsetWidth,cc=line.length;if(cc<=1)continue;const ep=(boxW-nw)/(cc-1);if(ep>max)max=ep;}document.body.removeChild(ts);const fs=Math.max(0,max),s=getScale();layer.inner.style.letterSpacing=(fs*s)+'px';layer._fillLetterSpacing=fs;}
+
+// ===== SELECTION =====
+function selectLayer(layer){if(selectedLayer&&selectedLayer!==layer){selectedLayer.el.classList.remove('selected');}selectedLayer=layer;if(layer){layer.el.classList.add('selected');document.getElementById('selFont').value=layer.fontName||'یکان';document.getElementById('txtSize').value=layer.size;document.getElementById('txtColor').value=layer.color;document.getElementById('txtColorHex').value=layer.color;document.getElementById('toggleBold').classList.toggle('on',layer.bold);document.getElementById('toggleItalic').classList.toggle('on',layer.italic);document.getElementById('txtAlign').value=layer.align;document.getElementById('txtLineH').value=layer.lineHeight;document.getElementById('lineHVal').textContent=layer.lineHeight;document.getElementById('txtLetterSp').value=layer.letterSpacing;document.getElementById('letterSpVal').textContent=layer.letterSpacing;document.getElementById('toggleShadow').classList.toggle('on',layer.shadow);setLayoutUI(layer.layout||'normal');}}
+
+function deleteSelected(){if(!selectedLayer){showToast('⚠️ کادری انتخاب نشده');return;}historyPushBefore();const l=selectedLayer;if(layerFontStyles[l.id]){layerFontStyles[l.id].remove();delete layerFontStyles[l.id];}l.el.remove();layers=layers.filter(x=>x!==l);selectedLayer=null;if(!layers.length)addTextZone.style.display='flex';historyPush();showToast('🗑️ حذف شد');}
+
+let _lastUpdateSelectedState=null,_updateSelectedTimer=null;
+function updateSelected(){if(!selectedLayer)return;if(!_lastUpdateSelectedState)_lastUpdateSelectedState=captureState();const l=selectedLayer;l.fontName=document.getElementById('selFont').value;l.size=parseInt(document.getElementById('txtSize').value)||48;l.color=document.getElementById('txtColor').value;l.bold=document.getElementById('toggleBold').classList.contains('on');l.italic=document.getElementById('toggleItalic').classList.contains('on');l.align=document.getElementById('txtAlign').value;l.lineHeight=parseFloat(document.getElementById('txtLineH').value)||1.8;l.letterSpacing=parseFloat(document.getElementById('txtLetterSp').value)||0;l.shadow=document.getElementById('toggleShadow').classList.contains('on');document.getElementById('lineHVal').textContent=l.lineHeight;document.getElementById('letterSpVal').textContent=l.letterSpacing;document.getElementById('txtColorHex').value=l.color;applyLayerVisuals(l);applyFontToLayer(l);clearTimeout(_updateSelectedTimer);_updateSelectedTimer=setTimeout(()=>{if(_lastUpdateSelectedState){historyStack=historyStack.slice(0,historyIndex+1);historyStack.push(_lastUpdateSelectedState);historyIndex=historyStack.length-1;_lastUpdateSelectedState=null;historyPush();}updateUndoRedoButtons();},300);}
+
+function setLayout(layout){if(selectedLayer&&selectedLayer.layout!==layout)historyPushBefore();currentLayout=layout;setLayoutUI(layout);if(selectedLayer){selectedLayer.layout=layout;applyLayerVisuals(selectedLayer);historyPush();}}
+function setLayoutUI(layout){document.querySelectorAll('.layout-opt').forEach(el=>el.classList.toggle('active',el.dataset.layout===layout));}
+
+// ===== MOVE (via move handle) =====
+function startMove(e,layer){dragState={type:'move',layer,startX:e.clientX,startY:e.clientY,origCx:layer.cx,origCy:layer.cy};document.addEventListener('mousemove',onDragMove);document.addEventListener('mouseup',onDragEnd);}
+function startTouchMove(e,layer){const t=e.touches[0];dragState={type:'move',layer,startX:t.clientX,startY:t.clientY,origCx:layer.cx,origCy:layer.cy};document.addEventListener('touchmove',onTouchDragMove,{passive:false});document.addEventListener('touchend',onTouchDragEnd);}
+
+// ===== RESIZE =====
+function startResize(e,layer,handle){dragState={type:'resize',layer,handle,startX:e.clientX,startY:e.clientY,origCx:layer.cx,origCy:layer.cy,origCw:layer.cw,origCh:layer.ch};document.addEventListener('mousemove',onDragMove);document.addEventListener('mouseup',onDragEnd);}
+function startTouchResize(e,layer,handle){const t=e.touches[0];dragState={type:'resize',layer,handle,startX:t.clientX,startY:t.clientY,origCx:layer.cx,origCy:layer.cy,origCw:layer.cw,origCh:layer.ch};document.addEventListener('touchmove',onTouchDragMove,{passive:false});document.addEventListener('touchend',onTouchDragEnd);}
+
+function onDragMove(e){if(!dragState)return;if(dragState.type==='move')doMove(e.clientX,e.clientY);else doResize(e.clientX,e.clientY);}
+function onTouchDragMove(e){e.preventDefault();if(!dragState)return;const t=e.touches[0];if(dragState.type==='move')doMove(t.clientX,t.clientY);else doResize(t.clientX,t.clientY);}
+
+function doMove(cx,cy){const s=getScale();dragState.layer.cx=dragState.origCx+(cx-dragState.startX)/s;dragState.layer.cy=dragState.origCy+(cy-dragState.startY)/s;applyLayerPosition(dragState.layer);}
+
+function doResize(cx,cy){const s=getScale(),dx=(cx-dragState.startX)/s,dy=(cy-dragState.startY)/s,h=dragState.handle,l=dragState.layer,minW=20,minH=15;
+if(h==='se'){l.cw=Math.max(minW,dragState.origCw+dx);l.ch=Math.max(minH,dragState.origCh+dy);}
+else if(h==='sw'){const nw=Math.max(minW,dragState.origCw-dx);l.cx=dragState.origCx+dragState.origCw-nw;l.cw=nw;l.ch=Math.max(minH,dragState.origCh+dy);}
+else if(h==='ne'){l.cw=Math.max(minW,dragState.origCw+dx);const nh=Math.max(minH,dragState.origCh-dy);l.cy=dragState.origCy+dragState.origCh-nh;l.ch=nh;}
+else if(h==='nw'){const nw=Math.max(minW,dragState.origCw-dx),nh=Math.max(minH,dragState.origCh-dy);l.cx=dragState.origCx+dragState.origCw-nw;l.cy=dragState.origCy+dragState.origCh-nh;l.cw=nw;l.ch=nh;}
+applyLayerPosition(l);applyLayerVisuals(l);}
+
+function onDragEnd(){if(dragState)historyPush();dragState=null;document.removeEventListener('mousemove',onDragMove);document.removeEventListener('mouseup',onDragEnd);}
+function onTouchDragEnd(){if(dragState)historyPush();dragState=null;document.removeEventListener('touchmove',onTouchDragMove);document.removeEventListener('touchend',onTouchDragEnd);}
+
+// ===== CLICK OUTSIDE =====
+document.addEventListener('mousedown',(e)=>{if(!e.target.closest('.text-layer')&&!e.target.closest('.sidebar')&&!e.target.closest('.header')){if(selectedLayer){selectedLayer.el.classList.remove('selected');selectedLayer=null;}}});
+
+// ===== CANVAS =====
+function updateCanvasSize(){const maxW=container.clientWidth-40,maxH=container.clientHeight-40,ratio=Math.min(maxW/canvasW,maxH/canvasH,1);paper.style.width=(canvasW*ratio)+'px';paper.style.height=(canvasH*ratio)+'px';layers.forEach(l=>{applyLayerPosition(l);applyLayerVisuals(l);});}
+function updateCanvasBg(){const tr=document.getElementById('toggleTransparent').classList.contains('on'),bg=document.getElementById('canvasBg').value;if(tr)paper.style.background='repeating-conic-gradient(#333 0% 25%, #444 0% 50%) 50% / 20px 20px';else if(bgDataUrl)paper.style.background=`url(${bgDataUrl}) center/cover no-repeat`;else paper.style.background=bg;}
+document.getElementById('bgFileInput').addEventListener('change',(e)=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{bgDataUrl=r.result;bgImage=new Image();bgImage.src=bgDataUrl;updateCanvasBg();document.getElementById('removeBgBtn').style.display='flex';showToast('🖼️ پس‌زمینه تنظیم شد');};r.readAsDataURL(f);e.target.value='';});
+function removeBg(){bgImage=null;bgDataUrl=null;document.getElementById('removeBgBtn').style.display='none';updateCanvasBg();showToast('🗑️ پس‌زمینه حذف شد');}
+
+// ===== EXPORT =====
+function doExport(format){if(selectedLayer)selectedLayer.el.classList.remove('selected');selectedLayer=null;const dpi=getDPI(),transparent=document.getElementById('toggleTransparent').classList.contains('on'),bgColor=document.getElementById('canvasBg').value;if(format==='png')exportPNG(dpi,transparent,bgColor);else if(format==='jpg')exportJPG(dpi,bgColor);else if(format==='svg')exportSVG(transparent,bgColor);else if(format==='pdf')exportPDF(transparent,bgColor);else if(format==='ai')exportAI(transparent,bgColor);else if(format==='eps')exportEPS(transparent,bgColor);}
+
+async function renderAllTextToCanvas(ctx,scale,bgColor,transparent){if(!transparent){if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,canvasW*scale,canvasH*scale);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,canvasW*scale,canvasH*scale);}}const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));for(const layer of sorted){const realFamily=layer.fontName&&fonts[layer.fontName]?fonts[layer.fontName].family:layer.fontName;const fontCSS=getFontCSS(layer.fontName);try{await document.fonts.load(`${layer.bold?'bold ':''} ${layer.italic?'italic ':''} ${layer.size*scale}px "${realFamily}"`);}catch(e){}const x=layer.cx*scale,y=layer.cy*scale,w=layer.cw*scale,h=layer.ch*scale;const text=layer.inner.innerText||layer.inner.textContent;const ls=layer.layout==='fill'?(layer._fillLetterSpacing||0):layer.letterSpacing;ctx.save();ctx.font=`${layer.bold?'bold ':''}${layer.italic?'italic ':''}${layer.size*scale}px ${fontCSS}`;ctx.fillStyle=layer.color;ctx.textAlign=layer.align==='justify'?'right':layer.align;ctx.textBaseline='top';if(layer.shadow){ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=8*scale;ctx.shadowOffsetX=2*scale;ctx.shadowOffsetY=2*scale;}const lines=text.split('\n'),lineH=layer.size*scale*layer.lineHeight;let textX;if(layer.align==='right')textX=x+w;else if(layer.align==='center')textX=x+w/2;else textX=x;let startY=y;if(layer.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}lines.forEach((line,i)=>{if(ls!==0){try{ctx.letterSpacing=(ls*scale)+'px';}catch(e){}}ctx.fillText(line,textX,startY+i*lineH);});ctx.restore();}}
+
+async function exportPNG(dpi,transparent,bgColor){const cvs=document.createElement('canvas');cvs.width=canvasW;cvs.height=canvasH;await renderAllTextToCanvas(cvs.getContext('2d'),1,bgColor,transparent);saveImageWithPicker(cvs,'FarsiType.png','image/png');}
+async function exportJPG(dpi,bgColor){const cvs=document.createElement('canvas');cvs.width=canvasW;cvs.height=canvasH;const ctx=cvs.getContext('2d');if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,cvs.width,cvs.height);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,cvs.width,cvs.height);}await renderAllTextToCanvas(ctx,1,bgColor,false);saveImageWithPicker(cvs,'FarsiType.jpg','image/jpeg');}
+
+function saveImageWithPicker(canvas,filename,mimeType){canvas.toBlob(blob=>{saveBlobFile(blob,filename,mimeType);},mimeType,0.95);}
+
+function exportSVG(transparent,bgColor){const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));let svg=`<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${canvasW}" height="${canvasH}" viewBox="0 0 ${canvasW} ${canvasH}">\n`;if(!transparent){if(bgDataUrl)svg+=`<image href="${bgDataUrl}" width="${canvasW}" height="${canvasH}"/>\n`;else svg+=`<rect width="${canvasW}" height="${canvasH}" fill="${bgColor}"/>\n`;}const efs=new Set();for(const l of sorted){if(l.fontName&&fonts[l.fontName]&&!efs.has(l.fontName)){efs.add(l.fontName);const f=fonts[l.fontName];const m=f.style.textContent.match(/url\("([^"]+)"\)/);if(m)svg+=`<defs><style>@font-face{font-family:"${f.family}";src:url("${m[1]}")}</style></defs>\n`;}}if(sorted.some(l=>l.shadow))svg+=`<defs><filter id="ts"><feDropShadow dx="2" dy="2" stdDeviation="4" flood-color="rgba(0,0,0,0.5)"/></filter></defs>\n`;for(const l of sorted){const ff=getFontCSS(l.fontName),x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}const ls=l.layout==='fill'?(l._fillLetterSpacing||0):l.letterSpacing;lines.forEach((line,i)=>{const tx=l.align==='center'?x+w/2:l.align==='left'?x:x+w,ty=startY+i*lineH+l.size*0.8;svg+=`<text x="${tx}" y="${ty}" font-family="${ff}" font-size="${l.size}" fill="${l.color}" font-weight="${l.bold?'bold':'normal'}" font-style="${l.italic?'italic':'normal'}" text-anchor="${l.align==='right'?'end':l.align==='center'?'middle':'start'}" ${l.shadow?'filter="url(#ts)"':''} letter-spacing="${ls}">${escapeXml(line)}</text>\n`;});}svg+='</svg>';saveBlobFile(new Blob([svg],{type:'image/svg+xml'}),'FarsiType.svg','image/svg+xml');showToast('✅ SVG ذخیره شد!');}
+
+async function exportPDF(transparent,bgColor){const cvs=document.createElement('canvas');cvs.width=canvasW;cvs.height=canvasH;const ctx=cvs.getContext('2d');if(!transparent){if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,cvs.width,cvs.height);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,cvs.width,cvs.height);}}await renderAllTextToCanvas(ctx,1,bgColor,transparent);const jpgData=cvs.toDataURL('image/jpeg',0.95),pdfW=canvasW*0.75,pdfH=canvasH*0.75;saveBlobFile(buildPDFBlob(jpgData,pdfW,pdfH,canvasW,canvasH),'FarsiType.pdf','application/pdf');showToast('✅ PDF ذخیره شد!');}
+
+function buildPDFBlob(imgData,w,h,imgW,imgH){const clean=imgData.split(',')[1],binary=atob(clean),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const imgLen=bytes.length,cs=`q ${w} 0 0 ${h} 0 0 cm /Img1 Do Q`;let pdf='%PDF-1.4\n';const offsets=[];offsets.push(pdf.length);pdf+=`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`;offsets.push(pdf.length);pdf+=`2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n`;offsets.push(pdf.length);pdf+=`3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${w} ${h}] /Contents 4 0 R /Resources << /XObject << /Img1 5 0 R >> >> >>\nendobj\n`;offsets.push(pdf.length);pdf+=`4 0 obj\n<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\nendobj\n`;offsets.push(pdf.length);const hdr=`5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgLen} >>\nstream\n`;const end='\nendstream\nendobj\n';const xrefPos=pdf.length+hdr.length+imgLen+end.length;let xref=`xref\n0 6\n0000000000 65535 f \n`;for(const off of offsets)xref+=String(off).padStart(10,'0')+' 00000 n \n';xref+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;return new Blob([pdf+hdr,bytes,end+xref],{type:'application/pdf'});}
+
+async function exportAI(transparent,bgColor){const cvs=document.createElement('canvas');cvs.width=canvasW;cvs.height=canvasH;const ctx=cvs.getContext('2d');if(!transparent){if(bgImage&&bgDataUrl)ctx.drawImage(bgImage,0,0,cvs.width,cvs.height);else{ctx.fillStyle=bgColor;ctx.fillRect(0,0,cvs.width,cvs.height);}}await renderAllTextToCanvas(ctx,1,bgColor,transparent);const jpgData=cvs.toDataURL('image/jpeg',0.95),pdfW=canvasW*0.75,pdfH=canvasH*0.75;let pdf='%PDF-1.4\n%\xe2\xe3\xcf\xd3\n';const offsets=[];const clean=jpgData.split(',')[1],binary=atob(clean),bytes=new Uint8Array(binary.length);for(let i=0;i<binary.length;i++)bytes[i]=binary.charCodeAt(i);const imgLen=bytes.length,cs=`q ${pdfW} 0 0 ${pdfH} 0 0 cm /Img1 Do Q`;offsets.push(pdf.length);pdf+=`1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n`;offsets.push(pdf.length);pdf+=`2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n`;offsets.push(pdf.length);pdf+=`3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pdfW} ${pdfH}] /Contents 4 0 R /Resources << /XObject << /Img1 5 0 R >> >> >>\nendobj\n`;offsets.push(pdf.length);pdf+=`4 0 obj\n<< /Length ${cs.length} >>\nstream\n${cs}\nendstream\nendobj\n`;offsets.push(pdf.length);const hdr=`5 0 obj\n<< /Type /XObject /Subtype /Image /Width ${canvasW} /Height ${canvasH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${imgLen} >>\nstream\n`;const end='\nendstream\nendobj\n';const xrefPos=pdf.length+hdr.length+imgLen+end.length;let xref=`xref\n0 6\n0000000000 65535 f \n`;for(const off of offsets)xref+=String(off).padStart(10,'0')+' 00000 n \n';xref+=`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;saveBlobFile(new Blob([pdf+hdr,bytes,end+xref],{type:'application/pdf'}),'FarsiType.ai','application/pdf');showToast('✅ AI ذخیره شد!');}
+
+function exportEPS(transparent,bgColor){const sorted=[...layers].sort((a,b)=>Array.from(paper.children).indexOf(a.el)-Array.from(paper.children).indexOf(b.el));let eps=`%!PS-Adobe-3.0 EPSF-3.0\n%%Creator: FarsiType\n%%BoundingBox: 0 0 ${canvasW} ${canvasH}\n%%EndComments\n\n`;if(!transparent){const r=parseInt(bgColor.slice(1,3),16)/255,g=parseInt(bgColor.slice(3,5),16)/255,b=parseInt(bgColor.slice(5,7),16)/255;eps+=`${r} ${g} ${b} setrgbcolor\n0 0 ${canvasW} ${canvasH} rectfill\n`;}for(const l of sorted){const x=l.cx,y=l.cy,w=l.cw,h=l.ch,text=l.inner.innerText||l.inner.textContent,lines=text.split('\n'),lineH=l.size*l.lineHeight;const r=parseInt(l.color.slice(1,3),16)/255,g=parseInt(l.color.slice(3,5),16)/255,b=parseInt(l.color.slice(5,7),16)/255;eps+=`gsave\n${r} ${g} ${b} setrgbcolor\n`;let startY=y;if(l.layout==='center'){const tH=lines.length*lineH;startY=y+(h-tH)/2;if(startY<y)startY=y;}const ls=l.layout==='fill'?(l._fillLetterSpacing||0):l.letterSpacing;lines.forEach((line,i)=>{const psX=l.align==='center'?x+w/2:l.align==='left'?x:x+w;const psY=canvasH-startY-i*lineH-l.size*0.8;let hex='';for(let c=0;c<line.length;c++)hex+=line.charCodeAt(c).toString(16).padStart(4,'0');eps+=`${psX} ${psY} moveto <${hex}> show\n`;});eps+=`grestore\n`;}eps+=`%%EOF\n`;saveBlobFile(new Blob([eps],{type:'application/postscript'}),'FarsiType.eps','application/postscript');showToast('✅ EPS ذخیره شد!');}
+
+async function saveBlobFile(blob,filename,mimeType){
+  const ext=filename.split('.').pop();
+  const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/postscript':[{description:'EPS',accept:{'application/postscript':['.eps']}}]};
+  try{
+    if(window.showSaveFilePicker){
+      const h=await window.showSaveFilePicker({suggestedName:filename,types:types[mimeType]||[{description:ext,accept:{'*/*':['.'+ext]}}]});
+      const w=await h.createWritable(); await w.write(blob); await w.close(); showToast('✅ ذخیره شد!'); return;
+    }
+    // iPadOS Safari / Home Screen PWA: best path is native Share Sheet -> Save to Files.
+    if(navigator.canShare && navigator.share && window.File){
+      const file=new File([blob],filename,{type:mimeType||blob.type||'application/octet-stream'});
+      if(navigator.canShare({files:[file]})){
+        await navigator.share({files:[file],title:filename,text:'خروجی FarsiType'});
+        showToast('✅ از Share Sheet گزینه Save to Files را انتخاب کنید'); return;
+      }
+    }
+  }catch(e){ if(e && e.name==='AbortError') return; console.warn('save/share failed',e); }
+  fallbackSave(blob,filename);
+}
+function fallbackSave(blob,filename){
+  const url=URL.createObjectURL(blob);
+  const isiPad=/iPad|Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1;
+  if(isiPad){
+    const win=window.open(url,'_blank');
+    showToast(win?'فایل باز شد؛ از Share → Save to Files ذخیره کنید':'Popup مسدود شد؛ دوباره تلاش کنید');
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+    return;
+  }
+  const a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(()=>URL.revokeObjectURL(url),5000);
+}
+function escapeXml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');}
+
+let toastTimer;
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('visible');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('visible'),2500);}
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown',e=>{
+  if((e.ctrlKey||e.metaKey)&&!e.shiftKey&&e.key==='z'){e.preventDefault();undo();return;}
+  if((e.ctrlKey||e.metaKey)&&e.shiftKey&&e.key==='z'){e.preventDefault();redo();return;}
+  if((e.ctrlKey||e.metaKey)&&e.key==='y'){e.preventDefault();redo();return;}
+  if(e.key==='Delete'&&selectedLayer&&document.activeElement!==selectedLayer.inner){e.preventDefault();deleteSelected();}
+  if(e.key==='Escape'&&selectedLayer){selectedLayer.el.classList.remove('selected');selectedLayer=null;}
+});
+
+// ===== INIT =====
+initFonts();updateCanvasSize();historyPush();
+</script>
+<script>if('serviceWorker' in navigator && location.protocol!=='file:'){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script>
+</body>
+</html>
