@@ -121,7 +121,7 @@ input,textarea,select{font-size:16px!important}
 .made-by a:hover{text-decoration:underline}
 
 </style>
-<!-- FarsiType font pack v5 -->
+<!-- FarsiType font pack v6 -->
 </head>
 <body>
 <div id="app">
@@ -176,7 +176,7 @@ input,textarea,select{font-size:16px!important}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
           تنظیمات متن
         </div>
-        <div class="setting-row"><span class="setting-label">فونت:</span><div style="flex:1;min-width:0"><input class="font-search" id="fontSearch" type="search" placeholder="جستجوی فونت..." oninput="refreshFontDropdown()"><select id="selFont" onchange="onFontSelect()" style="width:100%"></select></div></div>
+        <div class="setting-row"><span class="setting-label">فونت:</span><div style="flex:1;min-width:0"><input class="font-search" id="fontSearch" type="search" placeholder="جستجوی فونت..." oninput="refreshFontDropdown()"><select id="selFont" onchange="onFontSelect()" onfocus="refreshFontDropdown()" onmousedown="refreshFontDropdown()" style="width:100%"></select></div></div>
         <div class="setting-row"><span class="setting-label">اندازه:</span><input type="number" id="txtSize" value="48" min="6" max="500" onchange="updateSelected()" oninput="updateSelected()"><span class="unit-label">pt</span></div>
         <div class="setting-row"><span class="setting-label">رنگ:</span><input type="color" id="txtColor" value="#ffffff" onchange="updateSelected()" oninput="updateSelected()"><input type="text" id="txtColorHex" value="#ffffff" style="background:var(--bg3);border:1px solid var(--border);color:var(--text);padding:5px;border-radius:5px;font-size:10px;width:70px" onchange="document.getElementById('txtColor').value=this.value;updateSelected()"></div>
         <div class="setting-row"><span class="setting-label">فاصله خط:</span><input type="range" id="txtLineH" min="0.8" max="3" step="0.1" value="1.8" onchange="updateSelected()" oninput="updateSelected()"><span id="lineHVal" style="font-size:10px;color:var(--text3);min-width:24px">1.8</span></div>
@@ -264,16 +264,16 @@ const paper=document.getElementById('canvasPaper'), container=document.getElemen
 const builtinFonts=[
   // iPadOS/Safari safe Persian & Arabic web fonts. Exact proprietary fonts can
   // be added from inside the app via «افزودن فونت از حافظه».
-  {name:'ایران سنس',css:'"Vazirmatn", "Noto Sans Arabic", Tahoma, Arial, sans-serif'},
-  {name:'لاله زار',css:'"Lalezar", "Vazirmatn", Tahoma, Arial, sans-serif'},
-  {name:'تیتر کوفی',css:'"Reem Kufi", "Vazirmatn", Tahoma, Arial, sans-serif'},
-  {name:'نستعلیق نوتو',css:'"Noto Nastaliq Urdu", "Noto Naskh Arabic", serif'},
-  {name:'نستعلیق نمایشی',css:'"Gulzar", "Noto Nastaliq Urdu", serif'},
-  {name:'خطاطی رقعه',css:'"Aref Ruqaa", "Noto Naskh Arabic", serif'},
-  {name:'خوشنویسی میرزا',css:'"Mirza", "Noto Naskh Arabic", serif'},
-  {name:'نسخ کتابی',css:'"Scheherazade New", "Noto Naskh Arabic", serif'},
-  {name:'نازنین',css:'"Noto Naskh Arabic", "Vazirmatn", Tahoma, serif'},
-  {name:'زر',css:'"Amiri", "Scheherazade New", serif'},
+  {name:'ایران سنس',css:'"Vazirmatn", "Noto Sans Arabic", Tahoma, Arial, sans-serif',lang:'both'},
+  {name:'لاله زار',css:'"Lalezar", "Vazirmatn", Tahoma, Arial, sans-serif',lang:'both'},
+  {name:'تیتر کوفی',css:'"Reem Kufi", "Vazirmatn", Tahoma, Arial, sans-serif',lang:'both'},
+  {name:'نستعلیق نوتو',css:'"Noto Nastaliq Urdu", "Noto Naskh Arabic", serif',lang:'both'},
+  {name:'نستعلیق نمایشی',css:'"Gulzar", "Noto Nastaliq Urdu", serif',lang:'both'},
+  {name:'خطاطی رقعه',css:'"Aref Ruqaa", "Noto Naskh Arabic", serif',lang:'both'},
+  {name:'خوشنویسی میرزا',css:'"Mirza", "Noto Naskh Arabic", serif',lang:'both'},
+  {name:'نسخ کتابی',css:'"Scheherazade New", "Noto Naskh Arabic", serif',lang:'both'},
+  {name:'نازنین',css:'"Noto Naskh Arabic", "Vazirmatn", Tahoma, serif',lang:'both'},
+  {name:'زر',css:'"Amiri", "Scheherazade New", serif',lang:'both'},
 ];
 
 let layerFontStyles={};
@@ -378,13 +378,50 @@ function getDPI(){return parseInt(document.getElementById('canvasDPI').value)||3
 // ===== FONTS =====
 function getFontCSS(name){if(!name)return'Tahoma, Arial';const bf=builtinFonts.find(f=>f.name===name);if(bf)return bf.css;if(fonts[name])return'"'+fonts[name].family+'", Tahoma, Arial';return'Tahoma, Arial';}
 function primaryFontFamily(css){const m=String(css||'').match(/\"([^\"]+)\"|'([^']+)'|([^,]+)/);return (m&&(m[1]||m[2]||m[3])||'Tahoma').trim();}
-function isPersianFontName(n){return /[\u0600-\u06FF]/.test(n||'');}
+function normalizeFontSearch(s){return String(s||'').toLowerCase().replace(/[ي]/g,'ی').replace(/[ك]/g,'ک').replace(/[ۀة]/g,'ه').replace(/[أإآ]/g,'ا').replace(/\s+/g,' ').trim();}
+function fontLangOf(item){return item.lang || (item.custom ? 'unknown' : 'both');}
+function detectFontLanguage(fontFamily){
+  // Detect by actual rendered glyph metrics, not by file/name. If Persian glyphs
+  // fall back to system fonts, metrics match the fallback more closely.
+  try{
+    const c=document.createElement('canvas'),ctx=c.getContext('2d');
+    const sampleFa='پژگچ فارسی';
+    const sampleEn='TypeFarsi';
+    function w(font,text){ctx.font='42px '+font;return ctx.measureText(text).width;}
+    const targetFa=w('"'+fontFamily+'", serif',sampleFa);
+    const serifFa=w('serif',sampleFa), sansFa=w('sans-serif',sampleFa), monoFa=w('monospace',sampleFa);
+    const faDiff=Math.min(Math.abs(targetFa-serifFa),Math.abs(targetFa-sansFa),Math.abs(targetFa-monoFa));
+    const targetEn=w('"'+fontFamily+'", serif',sampleEn);
+    const serifEn=w('serif',sampleEn), sansEn=w('sans-serif',sampleEn), monoEn=w('monospace',sampleEn);
+    const enDiff=Math.min(Math.abs(targetEn-serifEn),Math.abs(targetEn-sansEn),Math.abs(targetEn-monoEn));
+    const supportsFa=faDiff>1.2 || /Arabic|Naskh|Nastaliq|Vazir|Amiri|Aref|Mirza|Gulzar|Lateef|Scheherazade|Lalezar|Kufi/i.test(fontFamily);
+    const supportsEn=enDiff>0.6 || true;
+    return supportsFa && supportsEn ? 'both' : 'english';
+  }catch(e){return 'english'}
+}
 function fontSort(locale){return (a,b)=>a.name.localeCompare(b.name,locale,{sensitivity:'base'});}
 function appendFontGroup(sel,label,items,isCustom){if(!items.length)return;const g=document.createElement('optgroup');g.label=label;items.forEach(item=>{const o=document.createElement('option');o.value=item.name;o.textContent=item.name+(isCustom?' ★':'');g.appendChild(o);});sel.appendChild(g);}
-function refreshFontDropdown(preferredValue){const sel=document.getElementById('selFont'),search=document.getElementById('fontSearch');const cv=preferredValue||sel.value;const q=(search?search.value:'').trim().toLowerCase();const match=n=>!q||String(n).toLowerCase().includes(q);sel.innerHTML='';const custom=Object.keys(fonts).filter(match).map(n=>({name:n,custom:true}));const customFa=custom.filter(f=>isPersianFontName(f.name)).sort(fontSort('fa'));const customEn=custom.filter(f=>!isPersianFontName(f.name)).sort(fontSort('en'));const defaults=builtinFonts.filter(f=>match(f.name)).map(f=>({name:f.name})).sort(fontSort('fa'));appendFontGroup(sel,'فونت‌های اضافه‌شده فارسی',customFa,true);appendFontGroup(sel,'English Added Fonts',customEn,true);appendFontGroup(sel,'فونت‌های پیش‌فرض',defaults,false);if(cv&&[...sel.options].some(o=>o.value===cv))sel.value=cv;else if(sel.options.length)sel.selectedIndex=0;}
-function initFonts(){try{const s=localStorage.getItem('farsitype_fonts');if(s){JSON.parse(s)&&Object.entries(JSON.parse(s)).forEach(([n,d])=>{const fn='UserFont_'+(++fontCounter)+'_'+n.replace(/[^a-zA-Z0-9]/g,'_'),st=document.createElement('style');st.textContent=`@font-face{font-family:"${fn}";src:url("${d.src}") format("${d.format}");font-display:swap}`;document.head.appendChild(st);fonts[n]={family:fn,style:st,custom:true,src:d.src,format:d.format};});}}catch(e){}refreshFontDropdown();onCanvasCmChange();}
-function saveFontsToStorage(){try{const s={};Object.entries(fonts).forEach(([n,f])=>{if(f.custom)s[n]={src:f.src,format:f.format};});localStorage.setItem('farsitype_fonts',JSON.stringify(s));}catch(e){showToast('⚠️ حافظه پر شد — فونت‌ها در جلسه بعد ذخیره نمیشن');}}
-document.getElementById('fontFileInput').addEventListener('change',(e)=>{const files=e.target.files;if(!files||!files.length)return;for(const file of files){const reader=new FileReader();reader.onload=()=>{const name=file.name.replace(/\.(ttf|otf|woff|woff2)$/i,''),ext=file.name.split('.').pop().toLowerCase();let fmt='truetype';if(ext==='woff')fmt='woff';if(ext==='woff2')fmt='woff2';if(ext==='otf')fmt='opentype';const fn='UserFont_'+(++fontCounter)+'_'+name.replace(/[^a-zA-Z0-9]/g,'_'),st=document.createElement('style');st.textContent=`@font-face{font-family:"${fn}";src:url("${reader.result}") format("${fmt}");font-display:swap}`;document.head.appendChild(st);fonts[name]={family:fn,style:st,custom:true,src:reader.result,format:fmt};saveFontsToStorage();refreshFontDropdown();showToast('✅ فونت «'+name+'» اضافه شد');};reader.readAsDataURL(file);}e.target.value='';});
+function refreshFontDropdown(preferredValue){
+  const sel=document.getElementById('selFont'), search=document.getElementById('fontSearch');
+  const cv=preferredValue||sel.value;
+  const q=normalizeFontSearch(search?search.value:'');
+  const match=n=>!q || normalizeFontSearch(n).includes(q);
+  sel.innerHTML='';
+  const custom=Object.keys(fonts).filter(match).map(n=>({name:n,custom:true,lang:fonts[n].lang||detectFontLanguage(fonts[n].family)}));
+  const def=builtinFonts.filter(f=>match(f.name)).map(f=>({name:f.name,lang:f.lang||'both'}));
+  const customBoth=custom.filter(f=>fontLangOf(f)==='both').sort(fontSort('fa'));
+  const customEnglish=custom.filter(f=>fontLangOf(f)!=='both').sort(fontSort('en'));
+  const defBoth=def.filter(f=>fontLangOf(f)==='both').sort(fontSort('fa'));
+  const defEnglish=def.filter(f=>fontLangOf(f)!=='both').sort(fontSort('en'));
+  appendFontGroup(sel,'اضافه‌شده: فارسی و انگلیسی',customBoth,true);
+  appendFontGroup(sel,'Added: English Only',customEnglish,true);
+  appendFontGroup(sel,'پیش‌فرض: فارسی و انگلیسی',defBoth,false);
+  appendFontGroup(sel,'Default: English Only',defEnglish,false);
+  if(cv&&[...sel.options].some(o=>o.value===cv))sel.value=cv;else if(sel.options.length)sel.selectedIndex=0;
+}
+function initFonts(){try{const s=localStorage.getItem('farsitype_fonts');if(s){JSON.parse(s)&&Object.entries(JSON.parse(s)).forEach(([n,d])=>{const fn='UserFont_'+(++fontCounter)+'_'+n.replace(/[^a-zA-Z0-9]/g,'_'),st=document.createElement('style');st.textContent=`@font-face{font-family:"${fn}";src:url("${d.src}") format("${d.format}");font-display:swap}`;document.head.appendChild(st);fonts[n]={family:fn,style:st,custom:true,src:d.src,format:d.format,lang:d.lang||'unknown'};if(document.fonts&&document.fonts.load){document.fonts.load('32px "'+fn+'"').then(()=>{fonts[n].lang=detectFontLanguage(fn);saveFontsToStorage();refreshFontDropdown();}).catch(()=>{});}});}}catch(e){}refreshFontDropdown();onCanvasCmChange();}
+function saveFontsToStorage(){try{const s={};Object.entries(fonts).forEach(([n,f])=>{if(f.custom)s[n]={src:f.src,format:f.format,lang:f.lang||detectFontLanguage(f.family)};});localStorage.setItem('farsitype_fonts',JSON.stringify(s));}catch(e){showToast('⚠️ حافظه پر شد — فونت‌ها در جلسه بعد ذخیره نمیشن');}}
+document.getElementById('fontFileInput').addEventListener('change',(e)=>{const files=e.target.files;if(!files||!files.length)return;for(const file of files){const reader=new FileReader();reader.onload=()=>{const name=file.name.replace(/\.(ttf|otf|woff|woff2)$/i,''),ext=file.name.split('.').pop().toLowerCase();let fmt='truetype';if(ext==='woff')fmt='woff';if(ext==='woff2')fmt='woff2';if(ext==='otf')fmt='opentype';const fn='UserFont_'+(++fontCounter)+'_'+name.replace(/[^a-zA-Z0-9]/g,'_'),st=document.createElement('style');st.textContent=`@font-face{font-family:"${fn}";src:url("${reader.result}") format("${fmt}");font-display:swap}`;document.head.appendChild(st);fonts[name]={family:fn,style:st,custom:true,src:reader.result,format:fmt,lang:'unknown'};refreshFontDropdown(name);showToast('✅ فونت «'+name+'» اضافه شد');if(document.fonts&&document.fonts.load){document.fonts.load('32px "'+fn+'"').then(()=>{fonts[name].lang=detectFontLanguage(fn);saveFontsToStorage();refreshFontDropdown(name);}).catch(()=>{fonts[name].lang='english';saveFontsToStorage();refreshFontDropdown(name);});}else{fonts[name].lang=detectFontLanguage(fn);saveFontsToStorage();refreshFontDropdown(name);}};reader.readAsDataURL(file);}e.target.value='';});
 
 // ===== RESPONSIVE =====
 function checkResponsive(){const w=window.innerWidth;document.getElementById('sidebarToggle').style.display=w<=768?'flex':'none';if(w>768){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('visible');}}
