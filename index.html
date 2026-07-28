@@ -159,8 +159,27 @@ input,textarea,select{font-size:16px!important}
 .text-layer.pencil-hover-active{outline:2px solid var(--accent)!important;box-shadow:0 0 16px var(--accent-dim)}
 .resize-handle.pencil-hover-active::after{transform:translate(-50%,-50%) scale(1.35)!important}
 
+
+body.pencil-hover-enabled button:hover,
+body.pencil-hover-enabled .export-btn:hover,
+body.pencil-hover-enabled .layout-opt:hover,
+body.pencil-hover-enabled .theme-dot:hover,
+body.pencil-hover-enabled .toggle:hover,
+body.pencil-hover-enabled input:hover,
+body.pencil-hover-enabled select:hover,
+body.pencil-hover-enabled .canvas-container:hover,
+body.pencil-hover-enabled .sidebar:hover{filter:brightness(1.08)}
+body.pencil-hover-enabled input[type="range"]:hover{height:8px;accent-color:var(--accent2)}
+body.pencil-hover-enabled input[type="range"].pencil-hover-active{height:10px;accent-color:var(--accent2);filter:drop-shadow(0 0 8px var(--accent2))}
+input.pencil-hover-active,select.pencil-hover-active{outline:2px solid var(--accent)!important;outline-offset:2px!important;box-shadow:0 0 0 3px var(--accent-dim),0 0 16px var(--accent-dim)!important;background:var(--bg4)!important;color:var(--text)!important}
+.toggle.pencil-hover-active{transform:scale(1.15)!important;background:var(--accent-dim)!important;border-color:var(--accent)!important;box-shadow:0 0 16px var(--accent-dim)!important}
+.layout-opt.pencil-hover-active,.export-btn.pencil-hover-active,.h-btn.pencil-hover-active,.add-font-btn.pencil-hover-active,.remove-bg-btn.pencil-hover-active{transform:translateY(-1px) scale(1.06)!important}
+.sidebar.pencil-hover-active,.canvas-container.pencil-hover-active{transform:none!important;outline:2px solid var(--accent)!important;outline-offset:-3px!important;box-shadow:inset 0 0 24px var(--accent-dim)!important;background-image:linear-gradient(135deg,transparent,rgba(255,255,255,.03))!important}
+.canvas-paper.pencil-hover-active{transform:scale(1.01)!important;outline:2px solid var(--accent)!important;outline-offset:3px!important}
+.setting-row.pencil-hover-active,.sidebar-section.pencil-hover-active{transform:none!important;background:var(--accent-dim)!important;border-radius:8px!important;box-shadow:inset 0 0 0 1px var(--accent)!important}
+
 </style>
-<!-- FarsiType font pack v18 -->
+<!-- FarsiType font pack v19 -->
 </head>
 <body>
 <div id="app">
@@ -474,10 +493,35 @@ function initTheme(){setTheme(document.documentElement.getAttribute('data-theme'
 function setPencilHover(on){document.body.classList.toggle('pencil-hover-enabled',!!on);const b=document.getElementById('pencilHoverBtn');if(b)b.classList.toggle('on',!!on);try{localStorage.setItem('farsitype_pencil_hover',on?'1':'0')}catch(e){}}
 function togglePencilHover(){setPencilHover(!document.body.classList.contains('pencil-hover-enabled'))}
 function initPencilHover(){let on=false;try{on=localStorage.getItem('farsitype_pencil_hover')==='1'}catch(e){}setPencilHover(on)}
-function pencilHoverTarget(e){return e.target.closest('button,.export-btn,.layout-opt,.theme-dot,.toggle,.add-font-btn,.remove-bg-btn,.text-layer,.resize-handle,select,input[type=range],input[type=color]')}
-document.addEventListener('pointerover',e=>{if(e.pointerType==='pen'&&document.body.classList.contains('pencil-hover-enabled')){const t=pencilHoverTarget(e);if(t)t.classList.add('pencil-hover-active')}});
-document.addEventListener('pointerout',e=>{const t=pencilHoverTarget(e);if(t)t.classList.remove('pencil-hover-active')});
-document.addEventListener('pointermove',e=>{if(e.pointerType==='pen'&&document.body.classList.contains('pencil-hover-enabled')){document.querySelectorAll('.pencil-hover-active').forEach(x=>{if(x!==pencilHoverTarget(e))x.classList.remove('pencil-hover-active')});const t=pencilHoverTarget(e);if(t)t.classList.add('pencil-hover-active')}});
+const PENCIL_HOVER_SELECTOR='button,.h-btn,.export-btn,.layout-opt,.theme-dot,.toggle,.add-font-btn,.remove-bg-btn,input,select,textarea,.text-layer,.resize-handle,.setting-row,.sidebar-section,.canvas-paper,.canvas-container,.sidebar';
+let _pencilHoverEl=null;
+function pencilHoverTargetFromPoint(x,y){
+  const el=document.elementFromPoint(x,y);
+  if(!el) return null;
+  // Prefer direct interactive elements first, then larger regions.
+  return el.closest('button,.h-btn,.export-btn,.layout-opt,.theme-dot,.toggle,.add-font-btn,.remove-bg-btn,input,select,textarea,.text-layer,.resize-handle') || el.closest('.setting-row,.sidebar-section,.canvas-paper,.canvas-container,.sidebar');
+}
+function setPencilHoverElement(el){
+  if(_pencilHoverEl && _pencilHoverEl!==el) _pencilHoverEl.classList.remove('pencil-hover-active');
+  _pencilHoverEl=el;
+  if(el) el.classList.add('pencil-hover-active');
+}
+document.addEventListener('pointermove',e=>{
+  if(!document.body.classList.contains('pencil-hover-enabled')) return;
+  // Apple Pencil hover reports pointerType=pen with no buttons; also allow fine pointers for testing.
+  if(e.pointerType && e.pointerType!=='pen' && e.pointerType!=='mouse') return;
+  setPencilHoverElement(pencilHoverTargetFromPoint(e.clientX,e.clientY));
+},{passive:true});
+document.addEventListener('pointerover',e=>{
+  if(!document.body.classList.contains('pencil-hover-enabled')) return;
+  if(e.pointerType && e.pointerType!=='pen' && e.pointerType!=='mouse') return;
+  const t=(e.target&&e.target.closest)?e.target.closest(PENCIL_HOVER_SELECTOR):null;
+  if(t) setPencilHoverElement(t);
+},{passive:true});
+document.addEventListener('pointerout',e=>{
+  if(_pencilHoverEl && (!e.relatedTarget || !document.body.contains(e.relatedTarget))){setPencilHoverElement(null)}
+},{passive:true});
+document.addEventListener('scroll',()=>setPencilHoverElement(null),true);
 function onFontSelect(){if(!selectedLayer)return;selectedLayer.fontName=document.getElementById('selFont').value;applyFontToLayer(selectedLayer);}
 
 function applyFontToLayer(layer){if(!layer)return;const ff=getFontCSS(layer.fontName);if(document.fonts&&document.fonts.load){document.fonts.load(`${layer.bold?'bold ':''}${layer.size||48}px "${primaryFontFamily(ff)}"`).catch(()=>{});}if(layerFontStyles[layer.id]){layerFontStyles[layer.id].remove();delete layerFontStyles[layer.id];}const st=document.createElement('style');st.textContent=`#${layer.id} .text-layer-inner, #${layer.id} .text-layer-inner *, #${layer.id} .text-layer-inner div, #${layer.id} .text-layer-inner span, #${layer.id} .text-layer-inner br { font-family: ${ff} !important; }`;document.head.appendChild(st);layerFontStyles[layer.id]=st;layer.inner.style.fontFamily=ff;if(layer.layout==='fill')autoFitText(layer);}
