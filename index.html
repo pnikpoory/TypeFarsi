@@ -179,7 +179,7 @@ input.pencil-hover-active,select.pencil-hover-active{outline:2px solid var(--acc
 .setting-row.pencil-hover-active,.sidebar-section.pencil-hover-active{transform:none!important;background:var(--accent-dim)!important;border-radius:8px!important;box-shadow:inset 0 0 0 1px var(--accent)!important}
 
 </style>
-<!-- FarsiType font pack v20 -->
+<!-- FarsiType font pack v21 -->
 </head>
 <body>
 <div id="app">
@@ -685,7 +685,20 @@ async function loadVectorLibs(){
   }
   return vectorLibPromise;
 }
-async function dataUrlToArrayBuffer(url){return await (await fetch(url)).arrayBuffer();}
+async function dataUrlToArrayBuffer(url){
+  // Safari/iPadOS can be unreliable with fetch(data:...) for large font files.
+  if(String(url).startsWith('data:')){
+    const comma=url.indexOf(',');
+    const meta=url.slice(0,comma), data=url.slice(comma+1);
+    if(/;base64/i.test(meta)){
+      const bin=atob(data); const bytes=new Uint8Array(bin.length);
+      for(let i=0;i<bin.length;i++) bytes[i]=bin.charCodeAt(i);
+      return bytes.buffer;
+    }
+    return new TextEncoder().encode(decodeURIComponent(data)).buffer;
+  }
+  return await (await fetch(url)).arrayBuffer();
+}
 async function getVectorFont(fontName){
   if(!fonts[fontName]||!fonts[fontName].custom||!fonts[fontName].src) return null;
   if(vectorFontCache[fontName]) return vectorFontCache[fontName];
@@ -951,7 +964,14 @@ async function exportAI(transparent,bgColor){
     const blob=buildVectorPdfBlob(body,pageW,pageH);
     await saveBlobFile(blob,'FarsiType.ai','application/illustrator');
     showToast('✅ AI شیپ‌شده ذخیره شد!');
-  }catch(e){console.error(e);alert(e.message||'خطا در خروجی AI');}
+  }catch(e){
+    console.error('AI vector PDF failed; falling back to Illustrator-compatible SVG payload:',e);
+    try{
+      const svg=await buildSVGString(transparent,bgColor,true);
+      await saveBlobFile(new Blob([svg],{type:'image/svg+xml'}),'FarsiType.ai','image/svg+xml');
+      showToast('✅ AI با روش جایگزین ذخیره شد!');
+    }catch(e2){console.error(e2);alert((e&&e.message)||'خطا در خروجی AI');}
+  }
 }
 
 async function drawOneLayerToCanvas(ctx,layer,scale=1){
@@ -1036,6 +1056,8 @@ async function exportPSD(){
 
 
 async function saveBlobFile(blob,filename,mimeType){
+  const saveMime=(filename.toLowerCase().endsWith('.ai')&&mimeType==='image/svg+xml')?'application/illustrator':mimeType;
+  mimeType=saveMime;
   const ext=filename.split('.').pop();
   const types={'image/png':[{description:'PNG',accept:{'image/png':['.png']}}],'image/jpeg':[{description:'JPEG',accept:{'image/jpeg':['.jpg','.jpeg']}}],'image/svg+xml':[{description:'SVG',accept:{'image/svg+xml':['.svg']}}],'application/pdf':[{description:'PDF',accept:{'application/pdf':['.pdf']}}],'application/illustrator':[{description:'Adobe Illustrator',accept:{'application/pdf':['.ai'],'application/illustrator':['.ai']}}],'image/vnd.adobe.photoshop':[{description:'Photoshop PSD',accept:{'image/vnd.adobe.photoshop':['.psd'],'application/octet-stream':['.psd']}}]};
   try{
